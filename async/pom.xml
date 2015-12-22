@@ -31,13 +31,13 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.ea.orbit</groupId>
-        <artifactId>orbit-parent</artifactId>
-        <version>0.6.3-SNAPSHOT</version>
+        <groupId>com.ea.async</groupId>
+        <artifactId>ea-async-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
-    <artifactId>orbit-async</artifactId>
-    <name>Orbit Async-Await</name>
+    <artifactId>ea-async</artifactId>
+    <name>EA Async-Await</name>
 
     <build>
         <plugins>
@@ -75,14 +75,14 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         <configuration>
                             <artifactSet>
                                 <includes>
-                                    <include>com.ea.orbit:orbit-agent-loader</include>
+                                    <include>com.ea.async:async-agent-loader</include>
                                     <include>org.ow2.asm:asm-debug-all</include>
                                 </includes>
                             </artifactSet>
                             <relocations>
                                 <relocation>
                                     <pattern>org.objectweb.</pattern>
-                                    <shadedPattern>com.ea.orbit.async.shaded.org.objectweb.</shadedPattern>
+                                    <shadedPattern>com.ea.async.shaded.org.objectweb.</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
@@ -96,26 +96,33 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm-debug-all</artifactId>
-            <version>${asm.version}</version>
+            <version>5.0.4</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+            <version>1.7.13</version>
         </dependency>
         <dependency>
             <groupId>com.ea.orbit</groupId>
             <artifactId>orbit-commons</artifactId>
-            <version>${project.version}</version>
+            <version>0.6.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.ea.orbit</groupId>
             <artifactId>orbit-agent-loader</artifactId>
-            <version>${project.version}</version>
+            <version>0.6.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
+            <version>3.4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
 

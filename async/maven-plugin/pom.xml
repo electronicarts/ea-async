@@ -29,15 +29,15 @@
 <project>
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.ea.orbit</groupId>
-        <artifactId>orbit-parent</artifactId>
-        <version>0.6.3-SNAPSHOT</version>
+        <groupId>com.ea.async</groupId>
+        <artifactId>ea-async-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
         <relativePath>../..</relativePath>
     </parent>
-    <groupId>com.ea.orbit</groupId>
-    <artifactId>orbit-async-maven-plugin</artifactId>
+    <groupId>com.ea.async</groupId>
+    <artifactId>ea-async-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <name>Orbit Async-Await Maven Plugin</name>
+    <name>EA Async-Await Maven Plugin</name>
     <description>Pre instruments class files to work with the async-await paradigm</description>
 
     <build>
@@ -69,7 +69,7 @@
         <dependency>
             <groupId>com.ea.orbit</groupId>
             <artifactId>orbit-async</artifactId>
-            <version>${project.version}</version>
+            <version>0.6.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
