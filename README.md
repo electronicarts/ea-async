@@ -13,7 +13,7 @@ Simple Examples
 =======
 #### With Orbit Tasks
 ```java
-import com.ea.orbiasync.Await;
+import com.ea.async.Await;
 import static com.ea.async.Await.await;
  
 public class Page
