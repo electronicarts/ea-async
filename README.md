@@ -15,7 +15,7 @@ If you're looking for async await on the .NET CLR, see [Asynchronous Programming
 Who should use it?
 ------
 
-Ea Async should be used to write non blocking asynchronous code that makes heavy use of CompletableFutures or CompletionStage.
+EA Async should be used to write non blocking asynchronous code that makes heavy use of CompletableFutures or CompletionStage.
 It improves scalability by freeing worker threads while your code awaits other processes;
 And improves productivity by making asynchronous code simpler and more readable.
 
