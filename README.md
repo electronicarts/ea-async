@@ -1,6 +1,10 @@
 EA Async
 ============
 
+[![Release](https://img.shields.io/github/release/electronicarts/ea-async.svg)](https://github.com/electronicarts/ea-async/releases)
+[![Maven Central](https://img.shields.io/maven-central/v/com.ea.async/ea-async-parent.svg)](http://repo1.maven.org/maven2/com/ea/async/)
+[![Build Status](https://img.shields.io/travis/electronicarts/ea-async.svg)](https://travis-ci.org/electronicarts/ea-async)
+
 EA Async implements async-await methods in the JVM.
 It allows programmers to write asynchronous code in a sequential fashion.
 It was developed by [BioWare](http://www.bioware.com), a division of [Electronic Arts](http://www.ea.com) and was originally part of the [Orbit Project](https://github.com/electronicarts/orbit).
