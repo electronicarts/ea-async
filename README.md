@@ -17,16 +17,17 @@ Examples
 
 ```java
 import static com.ea.async.Async.await;
+import static java.util.concurrent.CompletableFuture.fromValue;
 
 public class Store
 {
     public CompletableFuture<Boolean> buyItem(String itemTypeId, int cost)
     {
         if(!await(bank.decrement(cost))) {
-            return CompletableFuture.fromValue(false);
+            return fromValue(false);
         }
         await(inventory.giveItem(itemTypeId));
-        return CompletableFuture.fromValue(true);
+        return fromValue(true);
     }
 }
 ```
@@ -42,6 +43,8 @@ CompletableFutures to continue the execution as intermediary results arrive.
 This is how the first example looks without EA Async. It is a bit less readable.
 
 ```java
+import static java.util.concurrent.CompletableFuture.fromValue;
+
 public class Store
 {
     public CompletableFuture<Boolean> buyItem(String itemTypeId, int cost)
@@ -49,7 +52,7 @@ public class Store
         return bank.decrement(cost)
             .thenCompose(result -> {
                 if(!result) {
-                    return CompletableFuture.fromValue(false);
+                    return fromValue(false);
                 }
                 return inventory.giveItem(itemTypeId).thenApply(res -> true);
             });
@@ -65,17 +68,20 @@ EA Async abstracts away the complexity of the CompletableFutures.
 So you like CompletableFutures.
 Try converting this method to use only CompletableFutures without ever blocking (so no joining):
 
-```
+```java
+import static com.ea.async.Async.await;
+import static java.util.concurrent.CompletableFuture.fromValue;
+
 public class Store
 {
     public CompletableFuture<Boolean> buyItem(String itemTypeId, int cost)
     {
         if(!await(bank.decrement(cost))) {
-            return CompletableFuture.fromValue(false);
+            return fromValue(false);
         }
         try {
             await(inventory.giveItem(itemTypeId));
-            return CompletableFuture.fromValue(true);
+            return fromValue(true);
         } catch (Exception ex) {
             await(bank.refund(cost));
             throw new AppException(ex);
@@ -92,7 +98,7 @@ Getting started
 EA Async requires JVM 1.8.x.
 
 It works with java and scala and with most JVM languages.
-The only requirement to use EA Async is that must be used only inside methods that return return `CompletableFuture`, `CompletionStage`, or subclasses of `CompletableFuture`.
+The only requirement to use EA Async is that must be used only inside methods that return `CompletableFuture`, `CompletionStage`, or subclasses of `CompletableFuture`.
 
 ### Using with maven
 
@@ -131,7 +137,8 @@ It might interfere with jvm debugging. This alternative is present as a fallback
 Use the [ea-async-maven-plugin](maven-plugin). It will instrument your classes in compile time and 
 remove all references to `Async.await` and `Async.init()`.
 
-With build time instrumentation your project users won't need to have ea-async in their classpath unless they also choose to use it.
+With build time instrumentation your project users won't need to have EA Async in their classpath unless they also choose to use it.
+This means that EA Async <i>does not need to be a transitive dependency</i>.
 
 This is the best option for libraries and maven projects.
 
