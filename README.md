@@ -12,6 +12,13 @@ It was developed by [BioWare](http://www.bioware.com), a division of [Electronic
 
 If you're looking for async await on the .NET CLR, see [Asynchronous Programming with Async and Await](https://msdn.microsoft.com/en-us/library/hh191443.aspx).
 
+Who should use it?
+------
+
+Ea Async should be used to write non blocking asynchronous code that makes heavy use of CompletableFutures or CompletionStage.
+It improves scalability by freeing worker threads while your code awaits other processes;
+And improves productivity by making asynchronous code simpler and more readable.
+
 License
 =======
 EA Async is licensed under the [BSD 3-Clause License](./LICENSE).
@@ -138,7 +145,8 @@ This is a solution for testing and development, it has the least amount of confi
 It might interfere with jvm debugging. This alternative is present as a fallback.
 
 #### Option 3 - Run instrumentation tool
-The ea-async-VERSION.jar is a runnable artifact jar that can pre-instrument your files (since version 0.9.1)
+
+The ea-async-VERSION.jar is a runnable jar that can pre-instrument your files (since version 0.9.1)
 
 Usage:
 
@@ -153,7 +161,7 @@ java -cp guava.jar;commons-lang.jar  -jar ea-async-1.0.0.jar target/classes
 ```
 
 After that all the files in target/classes will have been instrumented.
-And all references to `Async.await` and `Async.init` will have being removed from them.
+There will be no references to `Async.await` and `Async.init` left in those classes.
 
 
 #### Option 4 - Build time instrumentation, with Maven - Preferred
