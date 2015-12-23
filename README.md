@@ -3,7 +3,7 @@ EA Async
 
 EA Async implements async-await methods in the JVM.
 It allows programmers to write asynchronous code in a sequential fashion.
-It was developed by [BioWare](http://www.bioware.com), a division of [Electronic Arts](http://www.ea.com).
+It was developed by [BioWare](http://www.bioware.com), a division of [Electronic Arts](http://www.ea.com) and was originally part of the [Orbit Project](https://github.com/electronicarts/orbit).
 
 If you're looking for async await on the .NET CLR, see [Asynchronous Programming with Async and Await](https://msdn.microsoft.com/en-us/library/hh191443.aspx).
 
