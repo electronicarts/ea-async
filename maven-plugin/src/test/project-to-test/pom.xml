@@ -34,7 +34,6 @@
     <name>EA Async-Await Samples: Maven Plugin Sample Usage</name>
 
     <properties>
-        <ea.async.version>1.0.0-SNAPSHOT</ea.async.version>
         <project.target.jdk>1.8</project.target.jdk>
         <project.source.jdk>1.8</project.source.jdk>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -46,6 +45,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
                 <configuration>
                     <target>${project.target.jdk}</target>
                     <source>${project.source.jdk}</source>
@@ -53,6 +53,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
+                <version>3.0.0</version>
                 <configuration>
                     <failOnError>false</failOnError>
                 </configuration>
@@ -60,6 +61,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.8.2</version>
                 <configuration>
                     <skip>true</skip>
                 </configuration>
@@ -68,7 +70,7 @@
             <plugin>
                 <groupId>com.ea.async</groupId>
                 <artifactId>ea-async-maven-plugin</artifactId>
-                <version>${ea.async.version}</version>
+                <version>${project.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -91,7 +93,7 @@
         <dependency>
             <groupId>com.ea.async</groupId>
             <artifactId>ea-async</artifactId>
-            <version>${ea.async.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>

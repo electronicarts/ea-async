@@ -32,7 +32,7 @@
         <groupId>com.ea.async</groupId>
         <artifactId>ea-async-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
-        <relativePath>../..</relativePath>
+        <relativePath>..</relativePath>
     </parent>
     <groupId>com.ea.async</groupId>
     <artifactId>ea-async-maven-plugin</artifactId>
