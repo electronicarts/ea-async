@@ -1,7 +1,9 @@
 EA Async
 ============
 
-EA Async implements async-await methods in the JVM. It allows programmers to write asynchronous code in a sequential fashion. It was developed by [BioWare](http://www.bioware.com), a division of [Electronic Arts](http://www.ea.com).
+EA Async implements async-await methods in the JVM.
+It allows programmers to write asynchronous code in a sequential fashion.
+It was developed by [BioWare](http://www.bioware.com), a division of [Electronic Arts](http://www.ea.com).
 
 If you're looking for async await on the .NET CLR, see [Asynchronous Programming with Async and Await](https://msdn.microsoft.com/en-us/library/hh191443.aspx).
 
@@ -9,65 +11,56 @@ License
 =======
 EA Async is licensed under the [BSD 3-Clause License](./LICENSE).
 
-Simple Examples
+Example
 =======
-#### With Orbit Tasks
+#### With EA-Async
+
 ```java
-import com.ea.async.Async;
 import static com.ea.async.Async.await;
- 
-public class Page
+
+public class Store
 {
-    public Task<Integer> getPageLength(URL url)
+    public CompletableFuture<Boolean> buyItem(String itemTypeId, int cost)
     {
-        Task<String> pageTask = getPage(url);
- 
-        // this will never block, it will return a promise
-        String page = await(pageTask);
- 
-        return Task.fromValue(page.length());
+        if(!await(getBank().decrement(cost))) {
+            return CompletableFuture.fromValue(false);
+        }
+        await(getInventory().giveItem(itemTypeId));
+        return CompletableFuture.fromValue(true);
     }
 }
-
-// do this once in the main class, or use the ea-async-maven-plugin, or use -javaagent:ea-async.jar
-Await.init();
-
-Task<Integer> lenTask = getPageLength(new URL("http://example.com"));
-System.out.println(lenTask.join());
-
 ```
-#### With CompletableFuture
+
+EA Async rewrites the calls to `Async.await` making your methods non blocking.
+
+#### Without EA Async
+
 ```java
-import com.ea.async.Async;
-import com.ea.async.Async;
-import static com.ea.async.Async.await;
-
-public class Page
+public class Store
 {
-    // must mark CompletableFuture methods with @Async
-    @Async
-    public CompletableFuture<Integer> getPageLength(URL url)
+    public CompletableFuture<Boolean> buyItem(String itemTypeId, int cost)
     {
-        CompletableFuture<String> pageTask = getPage(url);
-        String page = await(pageTask);
-        return CompletableFuture.completedFuture(page.length());
+        return getBank().decrement(cost)
+            .thenCompose(result -> {
+                if(!result) {
+                    return CompletableFuture.fromValue(false);
+                }
+                return getInventory().giveItem(itemTypeId).thenApply(res -> true);
+            });
     }
- }
-
-// do this once in the main class, or use the ea-async-maven-plugin, or use -javaagent:ea-async.jar
-Await.init();
-
-CompletableFuture<Integer> lenTask = getPageLength(new URL("http://example.com"));
-System.out.println(lenTask.join());
-
+}
 ```
+This is a small example... A method with a few more CompletableFutures can look very convoluted.
+
+EA-async abstracts away the complexity of the CompletableFutures.
 
 Getting started
 ---------------
 
-EA Async requires JVM 1.8.x as it relies on CompletableFuture, a new class.
+EA Async requires JVM 1.8.x.
 
-It can work with java and scala and with any JVM language that generates classes using methods with CompletableFuture, CompletionStage, or com.ea.orbit.concurrrent.Task return types.
+It works with java and scala and with most JVM languages.
+The only requirement to use EA Async is that must be used only inside methods that return return `CompletableFuture`, `CompletionStage`, or subclasses of `CompletableFuture`.
 
 ### Using with maven
 
@@ -75,36 +68,42 @@ It can work with java and scala and with any JVM language that generates classes
 <dependency>
     <groupId>com.ea.async</groupId>
     <artifactId>ea-async</artifactId>
-    <version>${ea-async.version}</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
-### Instumenting your code
+### Instrumenting your code
 
-#### Option 1 - Runtime
-On your main class or as early as possible, call at least once:
-```
-Await.init();
-```
-Provided that your JVM has the capability enabled, this will start a runtime instrumentation agent.
-
-This is the prefered solution for testing and development, it has the least amount of configuration.
-If you forget to invoke this function, the first call to `await` will initialize the system (and print a warning).
-
-#### Option 2 - JVM parameter
+#### Option 1 - JVM parameter
 
 Start your application with an extra JVM parameter: `-javaagent:ea-async-VERSION.jar`
 ```
  java -javaagent:ea-async-VERSION.jar -cp your_claspath YourMainClass args...
 ```
 
-#### Option 3 - Compile time instrumentation, with Maven
+It's recommended to add this as a default option to launchers in intellij projects that use ea-async.  
 
-Use the [ea-async-maven-plugin](maven-plugin). It will instrument your classes in compile time and remove all references to `await`.
-
-This is the best option for libraries.
-
+#### Option 2 - Runtime
+On your main class or as early as possible, call at least once:
 ```
+Async.init();
+```
+Provided that your JVM has the capability enabled, this will start a runtime instrumentation agent.
+
+This is a solution for testing and development, it has the least amount of configuration.
+It might interfere with jvm debugging. This alternative is present as a fallback.  
+If you forget to invoke this function, the first call to `await` will initialize the system (and print a warning).
+
+#### Option 3 - Build time instrumentation, with Maven - Preferred
+
+Use the [ea-async-maven-plugin](maven-plugin). It will instrument your classes in compile time and 
+remove all references to `Async.await` and `Async.init()`.
+
+With build time instrumentation our project users won't need to have ea-async in their classpath unless they also choose to use it.
+
+This is the best option for libraries and maven projects.
+
+```xml
 <build>
     <plugins>
         <plugin>
