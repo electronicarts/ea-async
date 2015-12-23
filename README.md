@@ -13,7 +13,7 @@ EA Async is licensed under the [BSD 3-Clause License](./LICENSE).
 
 Example
 =======
-#### With EA-Async
+#### With EA Async
 
 ```java
 import static com.ea.async.Async.await;
@@ -30,8 +30,12 @@ public class Store
     }
 }
 ```
+In this example `Bank.decrement` returns `CompletableFuture<Boolean>` and `Inventory.giveItem` returns `CompletableFuture<String>`
 
 EA Async rewrites the calls to `Async.await` making your methods non blocking.
+
+The methods look blocking but are actually transformed into asynchronous methods that use
+CompletableFutures continue the execution as intermediary results arrive.
 
 #### Without EA Async
 
