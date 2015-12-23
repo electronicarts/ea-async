@@ -9,11 +9,6 @@ Gradle plugin
 
  * Create a gradle plugin
 
-Gradle plugin
----------------
-
- * Create a gradle plugin
-
 Command line
 ---------------
 
