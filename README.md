@@ -35,7 +35,7 @@ In this example `Bank.decrement` returns `CompletableFuture<Boolean>` and `Inven
 EA Async rewrites the calls to `Async.await` making your methods non blocking.
 
 The methods look blocking but are actually transformed into asynchronous methods that use
-CompletableFutures continue the execution as intermediary results arrive.
+CompletableFutures to continue the execution as intermediary results arrive.
 
 #### Without EA Async
 
