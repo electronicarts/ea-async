@@ -57,7 +57,7 @@ public class InitRemovalTest extends BaseTest
         StaticUse.callInit();
         ClassReader cr = new ClassReader(StaticUse.class.getResourceAsStream(StaticUse.class.getName().replaceAll("^.*[.]", "") + ".class"));
         assertTrue(mentionsAwait(cr));
-        final byte[] bytes = new Transformer().transform(cr);
+        final byte[] bytes = new Transformer().transform(getClass().getClassLoader(), cr);
         ClassReader cr2 = new ClassReader(bytes);
         assertFalse(mentionsAwait(cr2));
     }

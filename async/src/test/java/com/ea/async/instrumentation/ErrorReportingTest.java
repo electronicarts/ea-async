@@ -63,7 +63,7 @@ public class ErrorReportingTest extends BaseTest
         final Transformer transformer = new Transformer();
         transformer.setErrorListener(t -> reference.set(t));
 
-        final byte[] bytes = transformer.transform(cr);
+        final byte[] bytes = transformer.transform(getClass().getClassLoader(), cr);
         assertNotNull(reference.get());
         assertTrue(reference.get().contains("invalidAwaitCall"));
 

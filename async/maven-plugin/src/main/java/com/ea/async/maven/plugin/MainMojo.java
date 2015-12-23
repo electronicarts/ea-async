@@ -28,14 +28,20 @@
 
 package com.ea.async.maven.plugin;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Mojo(name = "instrument",
         defaultPhase = LifecyclePhase.PROCESS_CLASSES,
@@ -45,8 +51,7 @@ import java.io.File;
 @Execute(goal = "instrument", phase = LifecyclePhase.PROCESS_CLASSES)
 public class MainMojo extends AbstractAsyncMojo
 {
-    @Parameter(defaultValue = "${project.build.outputDirectory}", required = true)
-    private File classesDirectory;
+
 
     protected String getType()
     {
@@ -65,5 +70,44 @@ public class MainMojo extends AbstractAsyncMojo
     public void execute() throws MojoExecutionException
     {
         super.execute();
+    }
+
+    private List<String> generateClassPath()
+    {
+        List<String> classpath = new ArrayList<>(2 + project.getArtifacts().size());
+
+        classpath.add(classesDirectory.getAbsolutePath());
+
+        Set<Artifact> classpathArtifacts = project.getArtifacts();
+
+        for (Artifact artifact : classpathArtifacts)
+        {
+            if (artifact.getArtifactHandler().isAddedToClasspath()
+                    && !"test".equalsIgnoreCase(artifact.getScope()))
+            {
+                File file = artifact.getFile();
+                if (file != null)
+                {
+                    classpath.add(file.getPath());
+                }
+            }
+        }
+        return classpath;
+    }
+
+    @Override
+    protected ClassLoader createClassLoader()
+    {
+        final URL[] urls = generateClassPath().stream().map(f -> {
+            try
+            {
+                return new File(f).toURI().toURL();
+            }
+            catch (MalformedURLException e)
+            {
+                throw new RuntimeException(e);
+            }
+        }).toArray(s -> new URL[s]);
+        return new URLClassLoader(urls);
     }
 }

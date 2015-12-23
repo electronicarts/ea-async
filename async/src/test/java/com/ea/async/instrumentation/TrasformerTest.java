@@ -65,7 +65,7 @@ public class TrasformerTest extends BaseTest
         });
         ClassWriter cw = new ClassWriter(0);
         cn.accept(cw);
-        final byte[] bytes = new Transformer().transform(new ClassReader(cw.toByteArray()));
+        final byte[] bytes = new Transformer().transform(getClass().getClassLoader(), new ClassReader(cw.toByteArray()));
         DevDebug.debugSaveTrace(cn.name, bytes);
         assertEquals("hello", createClass(AsyncFunction.class, bytes).apply(Task.fromValue("hello")).join());
     }
@@ -94,7 +94,7 @@ public class TrasformerTest extends BaseTest
         });
         ClassWriter cw = new ClassWriter(0);
         cn.accept(cw);
-        final byte[] bytes = new Transformer().transform(new ClassReader(cw.toByteArray()));
+        final byte[] bytes = new Transformer().transform(getClass().getClassLoader(), new ClassReader(cw.toByteArray()));
         // DevDebug.debugSaveTrace(cn.name, bytes);
         assertEquals("hello", createClass(AsyncFunction.class, bytes).apply(Task.fromValue("hello")).join());
     }
@@ -126,7 +126,7 @@ public class TrasformerTest extends BaseTest
         });
         ClassWriter cw = new ClassWriter(0);
         cn.accept(cw);
-        final byte[] bytes = new Transformer().transform(new ClassReader(cw.toByteArray()));
+        final byte[] bytes = new Transformer().transform(getClass().getClassLoader(), new ClassReader(cw.toByteArray()));
         DevDebug.debugSaveTrace(cn.name, bytes);
 
         assertEquals("hello", createClass(AsyncBiFunction.class, bytes).apply(Task.fromValue("hello"), Task.fromValue("world")).join());

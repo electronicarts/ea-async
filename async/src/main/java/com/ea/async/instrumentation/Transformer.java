@@ -53,10 +53,12 @@ import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Frame;
 import org.objectweb.asm.tree.analysis.Value;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.reflect.Modifier;
+import java.net.URL;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,6 +68,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -112,6 +115,7 @@ public class Transformer implements ClassFileTransformer
     private static final String COMPLETABLE_FUTURE_NAME = "java/util/concurrent/CompletableFuture";
 
     private static final Type COMPLETION_STAGE_TYPE = Type.getType("Ljava/util/concurrent/CompletionStage;");
+    private static final String COMPLETION_STAGE_NAME = "java/util/concurrent/CompletionStage";
     private static final String COMPLETION_STAGE_RET = ")Ljava/util/concurrent/CompletionStage;";
 
     private static final String _THIS = "_this";
@@ -130,6 +134,9 @@ public class Transformer implements ClassFileTransformer
             "metafactory",
             LAMBDA_DESC);
 
+    public static WeakHashMap<URL, Boolean> futureMap = new WeakHashMap<>();
+    public static WeakHashMap<ClassLoader, Set<URL>> classLoaderMap = new WeakHashMap<>();
+
     private Consumer<String> errorListener;
 
     @Override
@@ -144,7 +151,7 @@ public class Transformer implements ClassFileTransformer
             ClassReader cr = new ClassReader(classfileBuffer);
             if (needsInstrumentation(cr))
             {
-                return transform(cr);
+                return transform(loader, cr);
             }
             return null;
         }
@@ -191,14 +198,14 @@ public class Transformer implements ClassFileTransformer
         int tmpLocalMapping = -1;
     }
 
-    public byte[] instrument(InputStream inputStream)
+    public byte[] instrument(final ClassLoader classLoader, InputStream inputStream)
     {
         try
         {
             ClassReader cr = new ClassReader(inputStream);
             if (needsInstrumentation(cr))
             {
-                return transform(cr);
+                return transform(classLoader, cr);
             }
         }
         catch (Exception e)
@@ -211,10 +218,11 @@ public class Transformer implements ClassFileTransformer
     /**
      * Does the actual instrumentation generating new bytecode
      *
-     * @param cr the class reader for this class
+     * @param classLoader
+     * @param cr          the class reader for this class
      * @return null or the new class bytes
      */
-    public byte[] transform(ClassReader cr) throws AnalyzerException
+    public byte[] transform(final ClassLoader classLoader, ClassReader cr) throws AnalyzerException
     {
         ClassNode classNode = new ClassNode();
         // using EXPAND_FRAMES because F_SAME causes problems when inserting new frames
@@ -268,7 +276,7 @@ public class Transformer implements ClassFileTransformer
                                   }
                               }
                     ))
-                    || returnsCompletionStageSubClass(original)
+                    || returnsCompletionStageSubClass(classLoader, original)
                     )
             {
                 // async method
@@ -346,7 +354,7 @@ public class Transformer implements ClassFileTransformer
         return bytes;
     }
 
-    private boolean returnsCompletionStageSubClass(final MethodNode original)
+    private boolean returnsCompletionStageSubClass(ClassLoader classLoader, final MethodNode original)
     {
         final Type retType = Type.getReturnType(original.desc);
         if (retType.getSort() != Type.OBJECT)
@@ -354,14 +362,63 @@ public class Transformer implements ClassFileTransformer
             return false;
         }
         final String retTypeName = retType.getInternalName();
-        return isCompletionStage(retTypeName);
+        return isCompletionStage(classLoader, retTypeName);
     }
 
-    private boolean isCompletionStage(final String retTypeName)
+    private boolean isCompletionStage(final ClassLoader classLoader, final String internalName)
     {
-        // now this is hard for compile time instrumentation...
-        // so we will cheat a bit
-        return true;
+        if (COMPLETION_STAGE_NAME.equals(internalName))
+        {
+            return true;
+        }
+        if (COMPLETABLE_FUTURE_NAME.equals(internalName))
+        {
+            return true;
+        }
+        URL resource = classLoader.getResource(internalName + ".class");
+
+        Boolean aBoolean;
+        synchronized (futureMap)
+        {
+            aBoolean = futureMap.get(resource);
+        }
+        if (aBoolean != null)
+        {
+            return aBoolean;
+        }
+        aBoolean = isCompletionStage(classLoader, classLoader.getResourceAsStream(internalName + ".class"));
+        synchronized (classLoaderMap)
+        {
+            Set<URL> urls = classLoaderMap.get(classLoader);
+            if (urls == null)
+            {
+                // class loader hold the references to the urls
+                classLoaderMap.put(classLoader, urls = new HashSet<>());
+            }
+            urls.add(resource);
+        }
+        synchronized (futureMap)
+        {
+            futureMap.put(resource, aBoolean);
+        }
+        return aBoolean;
+    }
+
+    private boolean isCompletionStage(ClassLoader classLoader, InputStream resource)
+    {
+        if (resource == null)
+        {
+            return false;
+        }
+
+        try
+        {
+            return isCompletionStage(classLoader, new ClassReader(resource).getSuperName());
+        }
+        catch (IOException e)
+        {
+            return false;
+        }
     }
 
     private void transformAsyncMethod(final ClassNode classNode, final MethodNode original, final Map<String, Integer> nameUseCount) throws AnalyzerException
@@ -1641,5 +1698,4 @@ public class Transformer implements ClassFileTransformer
             errorListener.accept(String.format(format, arg1, arg2, arg3));
         }
     }
-
 }

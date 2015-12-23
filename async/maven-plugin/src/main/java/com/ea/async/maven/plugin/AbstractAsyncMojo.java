@@ -28,11 +28,13 @@
 
 package com.ea.async.maven.plugin;
 
-import com.ea.orbit.async.instrumentation.Transformer;
+import com.ea.async.instrumentation.Transformer;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.components.io.resources.PlexusIoFileResourceCollection;
 import org.codehaus.plexus.components.io.resources.PlexusIoResource;
@@ -42,6 +44,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLClassLoader;
 import java.util.Iterator;
 
 
@@ -75,12 +78,18 @@ public abstract class AbstractAsyncMojo extends AbstractMojo
     @Parameter(required = false)
     private File outputDirectory;
 
+    @Parameter(defaultValue = "${project.build.outputDirectory}", required = true)
+    protected File classesDirectory;
 
     /**
      * Prints each file being instrumented
      */
     @Parameter
     protected boolean verbose = false;
+
+    @Component
+    protected MavenProject project;
+
 
     /**
      * Return the specific output directory to instrument.
@@ -153,6 +162,7 @@ public abstract class AbstractAsyncMojo extends AbstractMojo
             final Transformer transformer = new Transformer();
             transformer.setErrorListener(error -> getLog().error(error));
             int instrumentedCount = 0;
+            ClassLoader classLoader = createClassLoader();
             while (it.hasNext())
             {
                 final PlexusIoResource resource = it.next();
@@ -161,7 +171,7 @@ public abstract class AbstractAsyncMojo extends AbstractMojo
                     byte[] bytes = null;
                     try (InputStream in = resource.getContents())
                     {
-                        bytes = transformer.instrument(in);
+                        bytes = transformer.instrument(classLoader, in);
                     }
                     catch (Exception e)
                     {
@@ -190,6 +200,7 @@ public abstract class AbstractAsyncMojo extends AbstractMojo
         }
     }
 
+
     private Iterator<PlexusIoResource> getFiles(final File contentDirectory) throws IOException
     {
         if (!contentDirectory.isDirectory())
@@ -208,4 +219,6 @@ public abstract class AbstractAsyncMojo extends AbstractMojo
 
         return collection.getResources();
     }
+
+    abstract ClassLoader createClassLoader();
 }
