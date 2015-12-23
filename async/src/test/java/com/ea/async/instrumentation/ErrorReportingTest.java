@@ -28,7 +28,7 @@
 
 package com.ea.async.instrumentation;
 
-import com.ea.async.Await;
+import com.ea.async.Async;
 
 import com.ea.async.test.BaseTest;
 import com.ea.async.Task;
@@ -49,7 +49,7 @@ public class ErrorReportingTest extends BaseTest
     {
         public void invalidAwaitCall(Task task)
         {
-            Await.await(task);
+            Async.await(task);
         }
     }
 

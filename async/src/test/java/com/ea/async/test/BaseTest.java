@@ -28,7 +28,6 @@
 
 package com.ea.async.test;
 
-import com.ea.async.Await;
 import com.ea.async.Task;
 
 import org.apache.commons.lang3.StringUtils;
@@ -53,12 +52,12 @@ import static org.objectweb.asm.Opcodes.*;
 
 public class BaseTest
 {
+    public static final String ASYNC_NAME = "com/ea/async/Async";
+
     static
     {
         //Await.init();
     }
-
-    private static final String AWAIT_NAME = "com/ea/async/Await";
 
     // pairs of completable futures and the future completions.
     protected Queue<Pair<CompletableFuture, Object>> blockedFutures = new LinkedList<>();
@@ -233,7 +232,7 @@ public class BaseTest
             final int address = cr.getItem(i);
             if (address > 0
                     && cr.readByte(address - 1) == 7
-                    && equalsUtf8(cr, address, AWAIT_NAME))
+                    && equalsUtf8(cr, address, ASYNC_NAME))
             {
                 // CONSTANT_Class_info {
                 //    u1 tag; = 7

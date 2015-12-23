@@ -55,7 +55,7 @@ public class TrasformerTest extends BaseTest
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 1);
             mv.visitTypeInsn(CHECKCAST, COM_EA_ASYNC_TASK);
-            mv.visitMethodInsn(INVOKESTATIC, "com/ea/async/Await", "await", "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;", false);
+            mv.visitMethodInsn(INVOKESTATIC, ASYNC_NAME, "await", "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;", false);
             mv.visitInsn(POP);
             mv.visitVarInsn(ALOAD, 1);
             mv.visitTypeInsn(CHECKCAST, COM_EA_ASYNC_TASK);
@@ -84,7 +84,7 @@ public class TrasformerTest extends BaseTest
             mv.visitVarInsn(LSTORE, 3);
             mv.visitVarInsn(ALOAD, 1);
             mv.visitTypeInsn(CHECKCAST, COM_EA_ASYNC_TASK);
-            mv.visitMethodInsn(INVOKESTATIC, "com/ea/async/Await", "await", "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;", false);
+            mv.visitMethodInsn(INVOKESTATIC, ASYNC_NAME, "await", "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;", false);
             mv.visitInsn(POP);
             mv.visitVarInsn(ALOAD, 1);
             mv.visitTypeInsn(CHECKCAST, COM_EA_ASYNC_TASK);
@@ -110,12 +110,12 @@ public class TrasformerTest extends BaseTest
 
             mv.visitVarInsn(ALOAD, 1);
             mv.visitTypeInsn(CHECKCAST, COM_EA_ASYNC_TASK);
-            mv.visitMethodInsn(INVOKESTATIC, "com/ea/async/Await", "await", "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;", false);
+            mv.visitMethodInsn(INVOKESTATIC, ASYNC_NAME, "await", "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;", false);
             mv.visitInsn(POP);
 
             mv.visitVarInsn(ALOAD, 2);
             mv.visitTypeInsn(CHECKCAST, COM_EA_ASYNC_TASK);
-            mv.visitMethodInsn(INVOKESTATIC, "com/ea/async/Await", "await", "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;", false);
+            mv.visitMethodInsn(INVOKESTATIC, ASYNC_NAME, "await", "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;", false);
             mv.visitInsn(POP);
 
             mv.visitVarInsn(ALOAD, 1);

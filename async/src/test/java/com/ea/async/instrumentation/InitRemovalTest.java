@@ -28,7 +28,7 @@
 
 package com.ea.async.instrumentation;
 
-import com.ea.async.Await;
+import com.ea.async.Async;
 import com.ea.async.test.BaseTest;
 
 import org.junit.Test;
@@ -47,7 +47,7 @@ public class InitRemovalTest extends BaseTest
     {
         public static void callInit()
         {
-            Await.init();
+            Async.init();
         }
     }
 

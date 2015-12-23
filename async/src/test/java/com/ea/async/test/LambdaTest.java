@@ -32,7 +32,7 @@ import com.ea.async.Task;
 
 import org.junit.Test;
 
-import static com.ea.async.Await.await;
+import static com.ea.async.Async.await;
 import static com.ea.async.Task.fromValue;
 import static org.junit.Assert.assertEquals;
 

@@ -42,6 +42,8 @@ import static org.objectweb.asm.Opcodes.*;
 public class UnorthodoxFrameTest extends BaseTest
 {
 
+    public static final String COM_EA_ASYNC_ASYNC = "com/ea/async/Async";
+
     // sanity check of the creator
     @Test
     @SuppressWarnings("unchecked")
@@ -54,7 +56,7 @@ public class UnorthodoxFrameTest extends BaseTest
             mv.visitInsn(DUP);
             mv.visitVarInsn(ALOAD, 1);
             mv.visitTypeInsn(CHECKCAST, "com/ea/async/Task");
-            mv.visitMethodInsn(INVOKESTATIC, "com/ea/async/Await", "await", "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;", false);
+            mv.visitMethodInsn(INVOKESTATIC, COM_EA_ASYNC_ASYNC, "await", "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;", false);
             mv.visitTypeInsn(CHECKCAST, "java/lang/String");
             mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Integer", "<init>", "(Ljava/lang/String;)V", false);
             mv.visitMethodInsn(INVOKESTATIC, "com/ea/async/Task", "fromValue", "(Ljava/lang/Object;)Lcom/ea/async/Task;", false);
@@ -84,7 +86,7 @@ public class UnorthodoxFrameTest extends BaseTest
 
             mv.visitVarInsn(ALOAD, 1);
             mv.visitTypeInsn(CHECKCAST, "com/ea/async/Task");
-            mv.visitMethodInsn(INVOKESTATIC, "com/ea/async/Await", "await", "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;", false);
+            mv.visitMethodInsn(INVOKESTATIC, COM_EA_ASYNC_ASYNC, "await", "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;", false);
             mv.visitTypeInsn(CHECKCAST, "java/lang/String");
             mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Integer", "<init>", "(Ljava/lang/String;)V", false);
 
@@ -127,7 +129,7 @@ public class UnorthodoxFrameTest extends BaseTest
 
             mv.visitVarInsn(ALOAD, 1);
             mv.visitTypeInsn(CHECKCAST, "com/ea/async/Task");
-            mv.visitMethodInsn(INVOKESTATIC, "com/ea/async/Await", "await", "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;", false);
+            mv.visitMethodInsn(INVOKESTATIC, COM_EA_ASYNC_ASYNC, "await", "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;", false);
             mv.visitTypeInsn(CHECKCAST, "java/lang/String");
             mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Integer", "<init>", "(Ljava/lang/String;)V", false);
 
@@ -161,7 +163,7 @@ public class UnorthodoxFrameTest extends BaseTest
 
             mv.visitVarInsn(ALOAD, 1);
             mv.visitTypeInsn(CHECKCAST, "com/ea/async/Task");
-            mv.visitMethodInsn(INVOKESTATIC, "com/ea/async/Await", "await", "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;", false);
+            mv.visitMethodInsn(INVOKESTATIC, COM_EA_ASYNC_ASYNC, "await", "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;", false);
             mv.visitTypeInsn(CHECKCAST, "java/lang/String");
             mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Integer", "<init>", "(Ljava/lang/String;)V", false);
             // no pop need as the constructor consumes the one copy
@@ -195,7 +197,7 @@ public class UnorthodoxFrameTest extends BaseTest
 
             mv.visitVarInsn(ALOAD, 1);
             mv.visitTypeInsn(CHECKCAST, "com/ea/async/Task");
-            mv.visitMethodInsn(INVOKESTATIC, "com/ea/async/Await", "await", "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;", false);
+            mv.visitMethodInsn(INVOKESTATIC, COM_EA_ASYNC_ASYNC, "await", "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;", false);
             mv.visitTypeInsn(CHECKCAST, "java/lang/String");
             mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Integer", "<init>", "(Ljava/lang/String;)V", false);
 
@@ -238,7 +240,7 @@ public class UnorthodoxFrameTest extends BaseTest
 
                 mv.visitVarInsn(ALOAD, 1);
                 mv.visitTypeInsn(CHECKCAST, "com/ea/async/Task");
-                mv.visitMethodInsn(INVOKESTATIC, "com/ea/async/Await", "await", "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;", false);
+                mv.visitMethodInsn(INVOKESTATIC, COM_EA_ASYNC_ASYNC, "await", "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;", false);
                 mv.visitTypeInsn(CHECKCAST, "java/lang/String");
                 mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Integer", "<init>", "(Ljava/lang/String;)V", false);
 
@@ -283,7 +285,7 @@ public class UnorthodoxFrameTest extends BaseTest
             // stack: { uobj, int, uobj }
             mv.visitVarInsn(ALOAD, 1);
             mv.visitTypeInsn(CHECKCAST, "com/ea/async/Task");
-            mv.visitMethodInsn(INVOKESTATIC, "com/ea/async/Await", "await", "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;", false);
+            mv.visitMethodInsn(INVOKESTATIC, COM_EA_ASYNC_ASYNC, "await", "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;", false);
             mv.visitTypeInsn(CHECKCAST, "java/lang/String");
             mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Integer", "<init>", "(Ljava/lang/String;)V", false);
             // stack: { uobj, int }

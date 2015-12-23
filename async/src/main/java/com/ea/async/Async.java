@@ -28,13 +28,19 @@
 
 package com.ea.async;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.ea.async.instrumentation.InitializeAsync;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.CompletableFuture;
 
 /**
- * Annotation to mark methods that will work with asynchronously with async-await.
+ * In methods annotated with {@literal @}Async calls to <code>await(future)</code>
+ * will cause the method to return a CompletableFuture (or Task) instead of blocking.
+ * <p/>
+ * This is equivalent to use CompletableFuture composition methods (ex: thenApply, handle).
+ * The advantage of using <code>await</code> is that the code will resemble sequential blocking code.
  * <p/>
  * Example:
  * <pre><code>
@@ -65,10 +71,52 @@ import java.lang.annotation.Target;
  * Otherwise, the first method to call {@code await()} might be blocking,
  * and a warning message will be printed to the console.
  * Subsequent async methods will work as expected.
- *
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Async
+public class Async
 {
+    /**
+     * Ensure that if no pre instrumentation was done, that the Async runtime instrumentation is running.
+     * <p/>
+     * Attention! The build time instrumentation will remove calls to this method.
+     */
+    public static void init()
+    {
+        InitializeAsync.init();
+    }
+
+    private static Logger logger;
+
+    /**
+     * Calls to this method are replaced by the orbit-async instrumentation.
+     *
+     * @param future a future to wait for.
+     * @param <T>    the return type of future.join()
+     * @return the return value of the future
+     */
+    public static <T> T await(CompletableFuture<T> future)
+    {
+        String warning;
+        if (!InitializeAsync.isRunning())
+        {
+            warning = "Warning: Illegal call to await, static { Await.init(); } must be added to the main program class and the method invoking await must return Task<?> or CompletableFuture<?>";
+        }
+        else
+        {
+            warning = "Warning: Illegal call to await, the method invoking await must return Task<?>, or CompletableFuture<?> with the annotation @Async";
+        }
+        LoggerFactory.getLogger(Async.class);
+        if (logger == null)
+        {
+            logger = LoggerFactory.getLogger(Async.class);
+        }
+        if (logger.isDebugEnabled())
+        {
+            logger.warn(warning, new Throwable());
+        }
+        else
+        {
+            logger.warn(warning);
+        }
+        return future.join();
+    }
 }

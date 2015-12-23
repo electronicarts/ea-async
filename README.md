@@ -13,8 +13,8 @@ Simple Examples
 =======
 #### With Orbit Tasks
 ```java
-import com.ea.async.Await;
-import static com.ea.async.Await.await;
+import com.ea.async.Async;
+import static com.ea.async.Async.await;
  
 public class Page
 {
@@ -39,8 +39,8 @@ System.out.println(lenTask.join());
 #### With CompletableFuture
 ```java
 import com.ea.async.Async;
-import com.ea.async.Await;
-import static com.ea.async.Await.await;
+import com.ea.async.Async;
+import static com.ea.async.Async.await;
 
 public class Page
 {

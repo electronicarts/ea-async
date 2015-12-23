@@ -34,7 +34,7 @@ import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
 
-import static com.ea.async.Await.await;
+import static com.ea.async.Async.await;
 import static org.junit.Assert.assertNull;
 
 public class SmallestExceptionTest extends BaseTest

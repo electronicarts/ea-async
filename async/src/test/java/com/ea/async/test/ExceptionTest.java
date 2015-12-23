@@ -35,7 +35,7 @@ import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
 
-import static com.ea.async.Await.await;
+import static com.ea.async.Async.await;
 import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -51,7 +51,6 @@ public class ExceptionTest extends BaseTest
         assertEquals((Integer) 10, res.join());
     }
 
-    @Async
     private Task<Integer> doTryCatch()
     {
         try
@@ -78,7 +77,6 @@ public class ExceptionTest extends BaseTest
         assertTrue(res.isDone());
     }
 
-    @Async
     private Task doTryCatch2()
     {
         int c = 1;
@@ -103,7 +101,6 @@ public class ExceptionTest extends BaseTest
         assertEquals("fail", res.join());
     }
 
-    @Async
     private Task doTryCatch3()
     {
         int c = 1;
@@ -135,7 +132,6 @@ public class ExceptionTest extends BaseTest
         assertEquals("fail", res.join());
     }
 
-    @Async
     private Task doTryCatch4()
     {
         int c = 1;

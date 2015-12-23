@@ -28,14 +28,12 @@
 
 package com.ea.async.test;
 
-import com.ea.async.Async;
-
 import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.CompletableFuture;
 
-import static com.ea.async.Await.await;
+import static com.ea.async.Async.await;
 import static org.junit.Assert.assertEquals;
 
 public class BasicInstrTest extends BaseTest
@@ -48,7 +46,6 @@ public class BasicInstrTest extends BaseTest
             return i + ":" + j + ":" + f + ":" + d + ":" + obj + ":" + b;
         }
 
-        @Async
         public CompletableFuture<String> doSomething(CompletableFuture<String> blocker, int var)
         {
             return CompletableFuture.completedFuture(concat(var, 10_000_000_000L, 1.5f, 3.5d, await(blocker), true));

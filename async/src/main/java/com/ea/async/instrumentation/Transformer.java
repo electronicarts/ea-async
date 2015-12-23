@@ -36,7 +36,6 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.InsnList;
@@ -100,14 +99,13 @@ public class Transformer implements ClassFileTransformer
     // there is a test case that asserts that these constants contain the same value.
     static final String EA_ASYNC_RUNNING = "ea-async.running";
 
-    private static final String ASYNC_DESCRIPTOR = "Lcom/ea/async/Async;";
-    private static final String AWAIT_NAME = "com/ea/async/Await";
+    private static final String ASYNC_NAME = "com/ea/async/Async";
 
-    public static final String AWAIT_METHOD_DESC = "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;";
-    public static final String AWAIT_METHOD_NAME = "await";
+    public static final String ASYNC_METHOD_DESC = "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;";
+    public static final String ASYNC_METHOD_NAME = "await";
 
-    public static final String AWAIT_INIT_METHOD_DESC = "()V";
-    public static final String AWAIT_INIT_METHOD_NAME = "init";
+    public static final String ASYNC_INIT_METHOD_DESC = "()V";
+    public static final String ASYNC_INIT_METHOD_NAME = "init";
 
     private static final String COMPLETABLE_FUTURE_DESCRIPTOR = "Ljava/util/concurrent/CompletableFuture;";
     private static final Type COMPLETABLE_FUTURE_TYPE = Type.getType(COMPLETABLE_FUTURE_DESCRIPTOR);
@@ -265,17 +263,6 @@ public class Transformer implements ClassFileTransformer
 
             if (original.desc.endsWith(COMPLETABLE_FUTURE_RET)
                     || original.desc.endsWith(COMPLETION_STAGE_RET)
-                    || original.name.contains("$")
-                    || (original.visibleAnnotations != null && original.visibleAnnotations.stream()
-                    .anyMatch(new Predicate<AnnotationNode>()
-                              {
-                                  @Override
-                                  public boolean test(final AnnotationNode a)
-                                  {
-                                      return ((AnnotationNode) a).desc.equals(ASYNC_DESCRIPTOR);
-                                  }
-                              }
-                    ))
                     || returnsCompletionStageSubClass(classLoader, original)
                     )
             {
@@ -1365,9 +1352,9 @@ public class Transformer implements ClassFileTransformer
     private boolean isAwaitCall(int opcode, String owner, String name, String desc)
     {
         return opcode == Opcodes.INVOKESTATIC
-                && AWAIT_METHOD_NAME.equals(name)
-                && AWAIT_NAME.equals(owner)
-                && AWAIT_METHOD_DESC.equals(desc);
+                && ASYNC_METHOD_NAME.equals(name)
+                && ASYNC_NAME.equals(owner)
+                && ASYNC_METHOD_DESC.equals(desc);
     }
 
     private boolean isAwaitInitCall(final MethodInsnNode methodIns)
@@ -1378,9 +1365,9 @@ public class Transformer implements ClassFileTransformer
     private boolean isAwaitInitCall(int opcode, String owner, String name, String desc)
     {
         return opcode == Opcodes.INVOKESTATIC
-                && AWAIT_INIT_METHOD_NAME.equals(name)
-                && AWAIT_NAME.equals(owner)
-                && AWAIT_INIT_METHOD_DESC.equals(desc);
+                && ASYNC_INIT_METHOD_NAME.equals(name)
+                && ASYNC_NAME.equals(owner)
+                && ASYNC_INIT_METHOD_DESC.equals(desc);
     }
 
     private void saveStack(final MethodVisitor mv, final SwitchEntry se)
@@ -1548,7 +1535,7 @@ public class Transformer implements ClassFileTransformer
                 final int address = cr.getItem(i);
                 if (address > 0
                         && cr.readByte(address - 1) == 7
-                        && equalsUtf8(cr, address, AWAIT_NAME))
+                        && equalsUtf8(cr, address, ASYNC_NAME))
                 {
                     // CONSTANT_Class_info {
                     //    u1 tag; = 7
@@ -1595,17 +1582,17 @@ public class Transformer implements ClassFileTransformer
                         if (ntIndex == 0) continue;
                         int ntAddress = cr.getItem(ntIndex);
 
-                        if (equalsUtf8(cr, classAddress, AWAIT_NAME))
+                        if (equalsUtf8(cr, classAddress, ASYNC_NAME))
                         {
                             // has Await.await
-                            if (equalsUtf8(cr, ntAddress, AWAIT_METHOD_NAME)
-                                    && equalsUtf8(cr, ntAddress + 2, AWAIT_METHOD_DESC))
+                            if (equalsUtf8(cr, ntAddress, ASYNC_METHOD_NAME)
+                                    && equalsUtf8(cr, ntAddress + 2, ASYNC_METHOD_DESC))
                             {
                                 return true;
                             }
                             // has Await.init
-                            if (equalsUtf8(cr, ntAddress, AWAIT_INIT_METHOD_NAME)
-                                    && equalsUtf8(cr, ntAddress + 2, AWAIT_INIT_METHOD_DESC))
+                            if (equalsUtf8(cr, ntAddress, ASYNC_INIT_METHOD_NAME)
+                                    && equalsUtf8(cr, ntAddress + 2, ASYNC_INIT_METHOD_DESC))
                             {
                                 return true;
                             }

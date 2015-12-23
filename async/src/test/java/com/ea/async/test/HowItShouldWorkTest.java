@@ -32,7 +32,7 @@ import org.junit.Test;
 
 import java.util.concurrent.CompletableFuture;
 
-import static com.ea.async.Await.await;
+import static com.ea.async.Async.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 

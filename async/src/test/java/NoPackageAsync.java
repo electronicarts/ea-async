@@ -26,11 +26,9 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import com.ea.async.Async;
-
 import java.util.concurrent.CompletableFuture;
 
-import static com.ea.async.Await.await;
+import static com.ea.async.Async.await;
 
 public class NoPackageAsync
 {
@@ -40,7 +38,6 @@ public class NoPackageAsync
         return i + ":" + j + ":" + f + ":" + d + ":" + obj + ":" + b;
     }
 
-    @Async
     public CompletableFuture<Object> noPackageMethod(CompletableFuture<String> blocker, int var)
     {
         return CompletableFuture.completedFuture(concat(var, 10_000_000_000L, 1.5f, 3.5d, await(blocker), true));

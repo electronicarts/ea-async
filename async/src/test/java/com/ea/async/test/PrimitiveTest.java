@@ -28,14 +28,12 @@
 
 package com.ea.async.test;
 
-import com.ea.async.Async;
-
 import org.junit.Test;
 
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 
-import static com.ea.async.Await.await;
+import static com.ea.async.Async.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -111,7 +109,6 @@ public class PrimitiveTest extends BaseTest
 
     public static class PrimitiveUser1 extends Base
     {
-        @Async
         public CompletableFuture<Object> intTest(CompletableFuture<String> blocker, int var)
         {
             String res = await(blocker);
@@ -121,7 +118,6 @@ public class PrimitiveTest extends BaseTest
 
     public static class PrimitiveUser2 extends Base
     {
-        @Async
         public CompletableFuture<Object> longTest(CompletableFuture<String> blocker, long var)
         {
             String res = await(blocker);
@@ -131,7 +127,6 @@ public class PrimitiveTest extends BaseTest
 
     public static class PrimitiveUser3 extends Base
     {
-        @Async
         public CompletableFuture<Object> melange(
                 int pi1,
                 short ps1,
@@ -152,7 +147,6 @@ public class PrimitiveTest extends BaseTest
 
     public static class PrimitiveUser4 extends Base
     {
-        @Async
         public CompletableFuture<Object> melange(
                 int pi1,
                 short ps1,

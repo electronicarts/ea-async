@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static com.ea.async.Await.await;
+import static com.ea.async.Async.await;
 import static org.junit.Assert.assertEquals;
 
 public class FunctionCallTest extends BaseTest

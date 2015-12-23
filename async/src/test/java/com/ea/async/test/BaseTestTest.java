@@ -70,7 +70,7 @@ public class BaseTestTest extends BaseTest
             MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "call", "()Lcom/ea/async/Task;", null, new String[]{ "java/lang/Exception" });
             mv.visitCode();
             mv.visitMethodInsn(INVOKESTATIC, "com/ea/async/Task", "done", "()Lcom/ea/async/Task;", false);
-            mv.visitMethodInsn(INVOKESTATIC, "com/ea/async/Await", "await", "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;", false);
+            mv.visitMethodInsn(INVOKESTATIC, ASYNC_NAME, "await", "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;", false);
             mv.visitInsn(POP);
             mv.visitMethodInsn(INVOKESTATIC, "com/ea/async/Task", "done", "()Lcom/ea/async/Task;", false);
             mv.visitInsn(ARETURN);
@@ -91,7 +91,7 @@ public class BaseTestTest extends BaseTest
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 1);
             mv.visitTypeInsn(CHECKCAST, "com/ea/async/Task");
-            mv.visitMethodInsn(INVOKESTATIC, "com/ea/async/Await", "await", "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;", false);
+            mv.visitMethodInsn(INVOKESTATIC, ASYNC_NAME, "await", "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;", false);
             mv.visitInsn(POP);
             mv.visitVarInsn(ALOAD, 1);
             mv.visitTypeInsn(CHECKCAST, "com/ea/async/Task");

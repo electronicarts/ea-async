@@ -34,14 +34,13 @@ import org.junit.Test;
 
 import java.util.concurrent.CompletableFuture;
 
-import static com.ea.async.Await.await;
+import static com.ea.async.Async.await;
 import static org.junit.Assert.assertEquals;
 
 public class BasicTest extends BaseTest
 {
     public static class SomethingAsync
     {
-        @Async
         public CompletableFuture<Object> doSomething(CompletableFuture<String> blocker)
         {
             String res = await(blocker);
@@ -51,7 +50,6 @@ public class BasicTest extends BaseTest
 
     public static class SomethingWithDataMutation
     {
-        @Async
         public CompletableFuture<Object> doSomething(CompletableFuture<String> blocker)
         {
             String op = "1";
@@ -63,7 +61,6 @@ public class BasicTest extends BaseTest
 
     public static class SomethingWithLocalsAndStack
     {
-        @Async
         public CompletableFuture<Object> doSomething(CompletableFuture<String> blocker)
         {
             int local = 7;
@@ -74,7 +71,6 @@ public class BasicTest extends BaseTest
 
     public static class SomethingAsyncWithEx
     {
-        @Async
         public CompletableFuture<Object> doSomething(CompletableFuture<String> blocker)
         {
             try

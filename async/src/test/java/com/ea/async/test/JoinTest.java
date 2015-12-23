@@ -28,20 +28,17 @@
 
 package com.ea.async.test;
 
-import com.ea.async.Async;
-
 import org.junit.Test;
 
 import java.util.concurrent.CompletableFuture;
 
-import static com.ea.async.Await.await;
+import static com.ea.async.Async.await;
 import static org.junit.Assert.assertEquals;
 
 public class JoinTest extends BaseTest
 {
     public static class OtherJoinCalls
     {
-        @Async
         public CompletableFuture<Object> doSomething(CompletableFuture<String> blocker)
         {
             int local = 7;

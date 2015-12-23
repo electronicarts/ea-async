@@ -47,7 +47,7 @@ import java.util.Arrays;
 
 // uses previous frames
 // consider uninitialized values
-public class FrameAnalyzer extends Analyzer
+class FrameAnalyzer extends Analyzer
 {
     private static final int FN_TOP = 0;
     private static final int FN_INTEGER = 1;
