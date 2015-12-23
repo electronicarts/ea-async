@@ -40,7 +40,7 @@ import org.objectweb.asm.tree.ClassNode;
 import static org.junit.Assert.assertEquals;
 import static org.objectweb.asm.Opcodes.*;
 
-public class TrasformerTest extends BaseTest
+public class TransformerTest extends BaseTest
 {
 
     public static final String COM_EA_ASYNC_TASK = "com/ea/async/Task";
