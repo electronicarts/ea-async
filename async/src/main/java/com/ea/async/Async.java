@@ -39,7 +39,7 @@ import java.util.concurrent.CompletionStage;
 /**
  * This class together with bytecode instrumentation implements the async-await functionality in the JVM.
  * <p/>
- * To use it call <code>Async.await(future)</code> from withing methods whose return type is
+ * To use it call <code>Async.await(future)</code> from within methods whose return type is
  * CompletionStage, CompletableFuture or subclasses of CompletableFuture.
  * <p/>
  * <code>Async.await(future)</code> won't block. It is semantically equivalent to call <code>future.join()</code>
