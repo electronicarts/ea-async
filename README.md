@@ -118,7 +118,7 @@ The only requirement to use EA Async is that must be used only inside methods th
 <dependency>
     <groupId>com.ea.async</groupId>
     <artifactId>ea-async</artifactId>
-    <version>1.0.0</version>
+    <version>${ea.async.version}</version>
 </dependency>
 ```
 
@@ -180,7 +180,7 @@ This is the best option for libraries and maven projects.
         <plugin>
             <groupId>com.ea.async</groupId>
             <artifactId>ea-async-maven-plugin</artifactId>
-            <version>1.0.0</version>
+            <version>${ea.async.version}</version>
             <executions>
                 <execution>
                     <goals>
