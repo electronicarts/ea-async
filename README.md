@@ -11,7 +11,7 @@ License
 =======
 EA Async is licensed under the [BSD 3-Clause License](./LICENSE).
 
-Example
+Examples
 =======
 #### With EA Async
 
@@ -22,10 +22,10 @@ public class Store
 {
     public CompletableFuture<Boolean> buyItem(String itemTypeId, int cost)
     {
-        if(!await(getBank().decrement(cost))) {
+        if(!await(bank.decrement(cost))) {
             return CompletableFuture.fromValue(false);
         }
-        await(getInventory().giveItem(itemTypeId));
+        await(inventory.giveItem(itemTypeId));
         return CompletableFuture.fromValue(true);
     }
 }
@@ -39,24 +39,52 @@ CompletableFutures to continue the execution as intermediary results arrive.
 
 #### Without EA Async
 
+This is how the first example looks without EA Async. It is a bit less readable.
+
 ```java
 public class Store
 {
     public CompletableFuture<Boolean> buyItem(String itemTypeId, int cost)
     {
-        return getBank().decrement(cost)
+        return bank.decrement(cost)
             .thenCompose(result -> {
                 if(!result) {
                     return CompletableFuture.fromValue(false);
                 }
-                return getInventory().giveItem(itemTypeId).thenApply(res -> true);
+                return inventory.giveItem(itemTypeId).thenApply(res -> true);
             });
     }
 }
 ```
 This is a small example... A method with a few more CompletableFutures can look very convoluted.
 
-EA-async abstracts away the complexity of the CompletableFutures.
+EA Async abstracts away the complexity of the CompletableFutures.
+
+#### With EA Async (2)
+
+So you like CompletableFutures.
+Try converting this method to use only CompletableFutures without ever blocking (so no joining):
+
+```
+public class Store
+{
+    public CompletableFuture<Boolean> buyItem(String itemTypeId, int cost)
+    {
+        if(!await(bank.decrement(cost))) {
+            return CompletableFuture.fromValue(false);
+        }
+        try {
+            await(inventory.giveItem(itemTypeId));
+            return CompletableFuture.fromValue(true);
+        } catch (Exception ex) {
+            await(bank.refund(cost));
+            throw new AppException(ex);
+        }
+    }
+}
+```
+
+Got it? Send it [to us](https://github.com/electronicarts/ea-async/issues/new). I bet it looks ugly...
 
 Getting started
 ---------------
