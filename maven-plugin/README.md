@@ -1,7 +1,7 @@
 EA Async Maven Plugin
 ============
 
-[EA Async](..) implements async-await methods in the JVM. It allows programmers to write asynchronous code in a sequential fashion. It was developed by [BioWare](http://www.bioware.com), a division of [Electronic Arts](http://www.ea.com).
+EA Async implements async-await methods in the JVM. It allows programmers to write asynchronous code in a sequential fashion. It was developed by [BioWare](http://www.bioware.com), a division of [Electronic Arts](http://www.ea.com).
 
 The EA Async Maven Plugin executes compile time instrumentation of classes that use EA Async.
 
