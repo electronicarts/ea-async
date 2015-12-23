@@ -2,9 +2,28 @@
 Maven plugin
 ---------------
 
- * Print instrumentation errors and warnings in the maven plugin
- * Turn misuse of await should be and error. With an option/annotation to disable the verification.
- * Ensure await.init is explicitly removed. With an option/annotation to disable the removal.
+ * Implement or remove inclusion and exclusion options.
+
+Gradle plugin
+---------------
+
+ * Create a gradle plugin
+
+Gradle plugin
+---------------
+
+ * Create a gradle plugin
+
+Command line
+---------------
+
+ * Implement command line instrumenter.
+   Example:
+
+       java -cp project_classpath;ea-async.jar com.ea.async.instrumentation.Transformer class_file_or_directory1 class_file_or_directory2
+   or
+
+       java -cp project_classpath -jar ea-async.jar class_file_or_directory1 class_file_or_directory2
 
 IDE integration
 ---------------
@@ -13,20 +32,15 @@ IDE integration
  * Eclipse plugin: compile time instrumentation
 
 
-Instrumentation
----------------
-
- * Treat `synchronized` blocks as errors? Or try to handle releasing/acquiring the lock.
-
-
-Tests
-------
- * test having a method type in the stack
-
-Unlikely features
+Other features
 -----------------
 
- * Instrument methods that don't return task but are called with a wrapper?
+ * Instrument methods that return Object but where all `return` keywords are used with some class derived from CompletionStage.
+   This would help with lambdas.
+
+ * Check the generic return type of a function besides the erased type.
+
+ * Unlikely: Instrument methods that don't return task but are called with a wrapper?
    Probably not a good idea.
 
 ```java
