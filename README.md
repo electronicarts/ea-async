@@ -148,7 +148,7 @@ This is the best option for libraries and maven projects.
         <plugin>
             <groupId>com.ea.async</groupId>
             <artifactId>ea-async-maven-plugin</artifactId>
-            <version>${ea-async.version}</version>
+            <version>1.0.0</version>
             <executions>
                 <execution>
                     <goals>
