@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.Future;
 
 /**
  * In methods annotated with {@literal @}Async calls to <code>await(future)</code>
@@ -80,7 +79,7 @@ public class Async
      * @param <T>    the return type of future.join()
      * @return the return value of the future
      */
-    public static <T, F extends CompletionStage<T> & Future<T>> T await(F future)
+    public static <T, F extends CompletionStage<T>> T await(F future)
     {
         String warning;
         if (!InitializeAsync.isRunning())
