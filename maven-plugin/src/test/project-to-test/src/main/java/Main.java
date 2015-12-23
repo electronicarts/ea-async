@@ -48,6 +48,14 @@ public class Main
         CompletableFuture<Integer> futureA = new CompletableFuture<>();
         CompletableFuture<Integer> futureB = new CompletableFuture<>();
 
+        System.out.println("Here is the async method we are going to call");
+        System.out.println();
+        System.out.println("    public static CompletableFuture<Integer> asyncAdd(CompletableFuture<Integer> a, CompletableFuture<Integer> b)");
+        System.out.println("    {");
+        System.out.println("        return completedFuture(await(a) + await(b));");
+        System.out.println("    }");
+        System.out.println();
+
         System.out.println("Calling the instrumented method, without ea async this would block");
         System.out.println("   result = futureA + futureB");
         System.out.println();
