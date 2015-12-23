@@ -137,7 +137,26 @@ If you forget to invoke this function, the first call to `await` will initialize
 This is a solution for testing and development, it has the least amount of configuration.
 It might interfere with jvm debugging. This alternative is present as a fallback.
 
-#### Option 3 - Build time instrumentation, with Maven - Preferred
+#### Option 3 - Run instrumentation tool
+The ea-async-VERSION.jar is a runnable artifact jar that can pre-instrument your files (since version 0.9.1)
+
+Usage:
+
+```bash
+java -cp YOUR_PROJECT_CLASSPATH -jar ea-async-VERSION.jar classDirectory
+```
+
+Example:
+
+```bash
+java -cp guava.jar;commons-lang.jar  -jar ea-async-1.0.0.jar target/classes
+```
+
+After that all the files in target/classes will have been instrumented.
+And all references to `Async.await` and `Async.init` will have being removed from them.
+
+
+#### Option 4 - Build time instrumentation, with Maven - Preferred
 
 Use the [ea-async-maven-plugin](maven-plugin). It will instrument your classes in compile time and 
 remove all references to `Async.await` and `Async.init()`.

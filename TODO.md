@@ -9,17 +9,6 @@ Gradle plugin
 
  * Create a gradle plugin
 
-Command line
----------------
-
- * Implement command line instrumenter.
-   Example:
-
-       java -cp project_classpath;ea-async.jar com.ea.async.instrumentation.Transformer class_file_or_directory1 class_file_or_directory2
-   or
-
-       java -cp project_classpath -jar ea-async.jar class_file_or_directory1 class_file_or_directory2
-
 IDE integration
 ---------------
 

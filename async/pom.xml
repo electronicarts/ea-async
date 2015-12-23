@@ -58,6 +58,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         <manifestEntries>
                             <Premain-Class>com.ea.async.instrumentation.Premain</Premain-Class>
                             <Agent-Class>com.ea.async.instrumentation.Agent</Agent-Class>
+                            <Main-Class>com.ea.async.instrumentation.Main</Main-Class>
                             <Can-Redefine-Classes>true</Can-Redefine-Classes>
                             <Can-Retransform-Classes>true</Can-Retransform-Classes>
                         </manifestEntries>
