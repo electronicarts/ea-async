@@ -3,6 +3,7 @@ EA Async
 
 [![Release](https://img.shields.io/github/release/electronicarts/ea-async.svg)](https://github.com/electronicarts/ea-async/releases)
 [![Maven Central](https://img.shields.io/maven-central/v/com.ea.async/ea-async-parent.svg)](http://repo1.maven.org/maven2/com/ea/async/)
+[![Javadocs](https://img.shields.io/maven-central/v/com.ea.async/ea-async.svg?label=Javadocs)](http://www.javadoc.io/doc/com.ea.async/ea-async)
 [![Build Status](https://img.shields.io/travis/electronicarts/ea-async.svg)](https://travis-ci.org/electronicarts/ea-async)
 
 EA Async implements async-await methods in the JVM.
