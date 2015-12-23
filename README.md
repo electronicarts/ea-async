@@ -7,7 +7,7 @@ If you're looking for async await on the .NET CLR, see [Asynchronous Programming
 
 License
 =======
-EA Async is licensed under the [BSD 3-Clause License](../LICENSE).
+EA Async is licensed under the [BSD 3-Clause License](./LICENSE).
 
 Simple Examples
 =======
