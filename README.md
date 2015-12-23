@@ -17,17 +17,17 @@ Examples
 
 ```java
 import static com.ea.async.Async.await;
-import static java.util.concurrent.CompletableFuture.fromValue;
+import static java.util.concurrent.CompletableFuture.completedFuture;
 
 public class Store
 {
     public CompletableFuture<Boolean> buyItem(String itemTypeId, int cost)
     {
         if(!await(bank.decrement(cost))) {
-            return fromValue(false);
+            return completedFuture(false);
         }
         await(inventory.giveItem(itemTypeId));
-        return fromValue(true);
+        return completedFuture(true);
     }
 }
 ```
@@ -43,7 +43,7 @@ CompletableFutures to continue the execution as intermediary results arrive.
 This is how the first example looks without EA Async. It is a bit less readable.
 
 ```java
-import static java.util.concurrent.CompletableFuture.fromValue;
+import static java.util.concurrent.CompletableFuture.completedFuture;
 
 public class Store
 {
@@ -52,7 +52,7 @@ public class Store
         return bank.decrement(cost)
             .thenCompose(result -> {
                 if(!result) {
-                    return fromValue(false);
+                    return completedFuture(false);
                 }
                 return inventory.giveItem(itemTypeId).thenApply(res -> true);
             });
@@ -70,18 +70,18 @@ Try converting this method to use only CompletableFutures without ever blocking 
 
 ```java
 import static com.ea.async.Async.await;
-import static java.util.concurrent.CompletableFuture.fromValue;
+import static java.util.concurrent.CompletableFuture.completedFuture;
 
 public class Store
 {
     public CompletableFuture<Boolean> buyItem(String itemTypeId, int cost)
     {
         if(!await(bank.decrement(cost))) {
-            return fromValue(false);
+            return completedFuture(false);
         }
         try {
             await(inventory.giveItem(itemTypeId));
-            return fromValue(true);
+            return completedFuture(true);
         } catch (Exception ex) {
             await(bank.refund(cost));
             throw new AppException(ex);
