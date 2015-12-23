@@ -32,7 +32,7 @@ import com.ea.orbit.concurrent.Task;
 
 import org.junit.Test;
 
-import static com.ea.orbit.async.Await.await;
+import static com.ea.async.Async.await;
 import static org.junit.Assert.assertEquals;
 
 public class AsyncTest extends BaseTest
