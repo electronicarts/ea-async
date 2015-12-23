@@ -44,7 +44,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <modules>
         <module>async</module>
-        <module>async/maven-plugin</module>
+        <module>maven-plugin</module>
     </modules>
 	
 	<dependencyManagement>
