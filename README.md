@@ -131,7 +131,7 @@ It might interfere with jvm debugging. This alternative is present as a fallback
 Use the [ea-async-maven-plugin](maven-plugin). It will instrument your classes in compile time and 
 remove all references to `Async.await` and `Async.init()`.
 
-With build time instrumentation our project users won't need to have ea-async in their classpath unless they also choose to use it.
+With build time instrumentation your project users won't need to have ea-async in their classpath unless they also choose to use it.
 
 This is the best option for libraries and maven projects.
 
