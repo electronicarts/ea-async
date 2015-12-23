@@ -28,23 +28,39 @@
 
 <project>
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>com.ea.orbit</groupId>
-        <artifactId>orbit-parent</artifactId>
-        <version>0.2.3-SNAPSHOT</version>
-        <relativePath>../../../../..</relativePath>
-    </parent>
+    <version>1.0.0-SNAPSHOT</version>
+    <groupId>com.ea.async.samples</groupId>
+    <artifactId>ea-async-maven-plugin-sample</artifactId>
+    <name>EA Async-Await Samples: Maven Plugin Sample Usage</name>
 
-    <groupId>com.ea.orbit.samples</groupId>
-    <artifactId>orbit-async-maven-plugin-sample</artifactId>
-    <name>Orbit Samples: Async-Await Maven Plugin Sample Usage</name>
+    <properties>
+        <ea.async.version>1.0.0-SNAPSHOT</ea.async.version>
+        <project.target.jdk>1.8</project.target.jdk>
+        <project.source.jdk>1.8</project.source.jdk>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
 
     <build>
         <plugins>
             <plugin>
-                <groupId>com.ea.orbit</groupId>
-                <artifactId>orbit-async-maven-plugin</artifactId>
-                <version>${project.version}</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <target>${project.target.jdk}</target>
+                    <source>${project.source.jdk}</source>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <failOnError>false</failOnError>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.ea.async</groupId>
+                <artifactId>ea-async-maven-plugin</artifactId>
+                <version>${ea.async.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -63,24 +79,15 @@
     </build>
     <dependencies>
         <dependency>
-            <groupId>com.ea.orbit</groupId>
-            <artifactId>orbit-async</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.ea.async</groupId>
+            <artifactId>ea-async</artifactId>
+            <version>${ea.async.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <version>4.12</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.ea.orbit</groupId>
-            <artifactId>orbit-commons</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

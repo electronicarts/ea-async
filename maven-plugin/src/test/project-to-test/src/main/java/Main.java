@@ -28,6 +28,60 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Main {
+import com.ea.async.Async;
 
+import java.util.concurrent.CompletableFuture;
+
+import static com.ea.async.Async.await;
+import static java.util.concurrent.CompletableFuture.completedFuture;
+
+public class Main
+{
+    static
+    {
+        Async.init();
+    }
+
+
+    public static void main(String args[])
+    {
+        CompletableFuture<Integer> futureA = new CompletableFuture<>();
+        CompletableFuture<Integer> futureB = new CompletableFuture<>();
+
+        System.out.println("Calling the instrumented method, without ea async this would block");
+        System.out.println("   result = futureA + futureB");
+        System.out.println();
+
+        CompletableFuture<Integer> result = asyncAdd(futureA, futureB);
+
+        System.out.println("The method returned a future that is not completed: ");
+        System.out.println("   result.isDone = " + result.isDone());
+        System.out.println();
+
+
+        System.out.println("Now we complete the futures that are blocking the async method");
+
+        futureA.complete(1);
+        futureB.complete(2);
+
+        System.out.println("   futureA = " + futureA.join());
+        System.out.println("   futureB = " + futureB.join());
+        System.out.println();
+
+        System.out.println("Result is complete because we have completed futureA and futureB");
+        System.out.println("   result.isDone =" + result.isDone());
+        System.out.println();
+
+        System.out.println("And here is the result");
+
+        final Integer resultValue = result.join();
+
+        System.out.println("   result = " + resultValue);
+        System.out.println();
+    }
+
+    public static CompletableFuture<Integer> asyncAdd(CompletableFuture<Integer> a, CompletableFuture<Integer> b)
+    {
+        return completedFuture(await(a) + await(b));
+    }
 }

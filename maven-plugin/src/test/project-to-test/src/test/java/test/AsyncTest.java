@@ -28,21 +28,49 @@
 
 package test;
 
-import com.ea.orbit.concurrent.Task;
+import com.ea.async.Async;
 
 import org.junit.Test;
 
-import static com.ea.async.Async.await;
-import static org.junit.Assert.assertEquals;
+import java.util.concurrent.CompletableFuture;
 
-public class AsyncTest extends BaseTest
+import static com.ea.async.Async.await;
+import static java.util.concurrent.CompletableFuture.completedFuture;
+import static org.junit.Assert.*;
+
+public class AsyncTest
 {
-    @Test
+    static
+    {
+        Async.init();
+    }
+
+    @Test(timeout = 5_000L)
     public void testThenCompose()
     {
-        Task<Integer> task = getBlockedTask(10)
-                .thenCompose(x -> Task.fromValue(x + await(getBlockedFuture(20))));
-        completeFutures();
-        assertEquals((Integer) 30, task.join());
+        CompletableFuture<Integer> futureA = new CompletableFuture<>();
+        CompletableFuture<Integer> futureB = new CompletableFuture<>();
+
+        // calling the instrumented function
+        // without async this would block
+        CompletableFuture<Integer> result = asyncAdd(futureA, futureB);
+
+        // it is not done because futureA and futureB are not completed
+        assertFalse(result.isDone());
+
+        futureA.complete(1);
+        futureB.complete(2);
+
+        // now the result is complete because we have completed futureA and futureB
+        assertTrue(result.isDone());
+
+        // and here is the result
+        assertEquals((Integer) 3, result.join());
+
+    }
+
+    public CompletableFuture<Integer> asyncAdd(CompletableFuture<Integer> a, CompletableFuture<Integer> b)
+    {
+        return completedFuture(await(a) + await(b));
     }
 }
