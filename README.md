@@ -118,7 +118,7 @@ The only requirement to use EA Async is that must be used only inside methods th
 <dependency>
     <groupId>com.ea.async</groupId>
     <artifactId>ea-async</artifactId>
-    <version>${ea.async.version}</version>
+    <version>0.9.1</version>
 </dependency>
 ```
 
@@ -157,7 +157,7 @@ java -cp YOUR_PROJECT_CLASSPATH -jar ea-async-VERSION.jar classDirectory
 Example:
 
 ```bash
-java -cp guava.jar;commons-lang.jar  -jar ea-async-1.0.0.jar target/classes
+java -cp guava.jar;commons-lang.jar  -jar ea-async-0.9.1.jar target/classes
 ```
 
 After that all the files in target/classes will have been instrumented.
@@ -180,7 +180,7 @@ This is the best option for libraries and maven projects.
         <plugin>
             <groupId>com.ea.async</groupId>
             <artifactId>ea-async-maven-plugin</artifactId>
-            <version>${ea.async.version}</version>
+            <version>0.9.1</version>
             <executions>
                 <execution>
                     <goals>
