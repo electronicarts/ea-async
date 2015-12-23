@@ -34,6 +34,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+import java.util.concurrent.Future;
 
 /**
  * In methods annotated with {@literal @}Async calls to <code>await(future)</code>
@@ -44,33 +46,15 @@ import java.util.concurrent.CompletableFuture;
  * <p/>
  * Example:
  * <pre><code>
- * import Async;
- * import static Await.await;
+ * import static Async.await;
  * ...
  *
- * {@literal@}Async
  * CompletableFuture<Integer> getPageLengthAsync()
  * {
  *     CompletableFuture<String> pageFuture = getPageAsync("http://example.com");
  *     String page = await(pageFuture);
  *     return CompletableFuture.completedFuture(page.length);
  * }</code></pre>
- *
- * Or using orbit Task:
- * <pre><code>
- * {@literal@}Async
- * Task CompletableFuture<Integer> getPageLengthAsync()
- * {
- *     Task<String> pageFuture = getPageAsync("http://example.com");
- *     String page = await(pageFuture);
- *     return Task.fromValue(page.length);
- * }</code></pre>
- *
- * <b>Caveat</b>: The following code must be called before the program execution:
- * {@code static { Await.init() }}
- * Otherwise, the first method to call {@code await()} might be blocking,
- * and a warning message will be printed to the console.
- * Subsequent async methods will work as expected.
  */
 public class Async
 {
@@ -87,22 +71,25 @@ public class Async
     private static Logger logger;
 
     /**
-     * Calls to this method are replaced by the orbit-async instrumentation.
+     * This method will behave as a CompletableFuture.join() but will actually cause the
+     * caller to return a promise instead of blocking.
+     *
+     * Calls to this method are replaced by the EA Async instrumentation.
      *
      * @param future a future to wait for.
      * @param <T>    the return type of future.join()
      * @return the return value of the future
      */
-    public static <T> T await(CompletableFuture<T> future)
+    public static <T, F extends CompletionStage<T> & Future<T>> T await(F future)
     {
         String warning;
         if (!InitializeAsync.isRunning())
         {
-            warning = "Warning: Illegal call to await, static { Await.init(); } must be added to the main program class and the method invoking await must return Task<?> or CompletableFuture<?>";
+            warning = "Warning: Illegal call to await, static { Await.init(); } must be added to the main program class and the method invoking await must return a CompletableFuture";
         }
         else
         {
-            warning = "Warning: Illegal call to await, the method invoking await must return Task<?>, or CompletableFuture<?> with the annotation @Async";
+            warning = "Warning: Illegal call to await, the method invoking await must return a CompletableFuture";
         }
         LoggerFactory.getLogger(Async.class);
         if (logger == null)
@@ -117,6 +104,11 @@ public class Async
         {
             logger.warn(warning);
         }
-        return future.join();
+        if (future instanceof CompletableFuture)
+        {
+            //noinspection unchecked
+            return ((CompletableFuture<T>) future).join();
+        }
+        return future.toCompletableFuture().join();
     }
 }

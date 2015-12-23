@@ -28,6 +28,7 @@
 
 package com.ea.async.test;
 
+import com.ea.async.Async;
 import com.ea.async.Task;
 
 import org.apache.commons.lang3.StringUtils;
@@ -56,7 +57,7 @@ public class BaseTest
 
     static
     {
-        //Await.init();
+        Async.init();
     }
 
     // pairs of completable futures and the future completions.

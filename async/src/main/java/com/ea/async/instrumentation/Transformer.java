@@ -101,7 +101,7 @@ public class Transformer implements ClassFileTransformer
 
     private static final String ASYNC_NAME = "com/ea/async/Async";
 
-    public static final String ASYNC_METHOD_DESC = "(Ljava/util/concurrent/CompletableFuture;)Ljava/lang/Object;";
+    //public static final String ASYNC_METHOD_DESC = "(Ljava/util/concurrent/CompletionStage;)Ljava/lang/Object;";
     public static final String ASYNC_METHOD_NAME = "await";
 
     public static final String ASYNC_INIT_METHOD_DESC = "()V";
@@ -292,6 +292,7 @@ public class Transformer implements ClassFileTransformer
                         {
                             // replaces invalid awaits with the join
                             notifyError("Invalid use of await at %s.%s", cr.getClassName(), original.name);
+                            visitMethodInsn(INVOKEINTERFACE, COMPLETION_STAGE_NAME, "toCompletableFuture", "()Ljava/util/concurrent/CompletableFuture;", true);
                             visitMethodInsn(INVOKEVIRTUAL, COMPLETABLE_FUTURE_NAME, JOIN_METHOD_NAME, JOIN_METHOD_DESC, false);
                         }
                         else if (isAwaitInitCall(opcode, owner, name, desc))
@@ -1076,6 +1077,8 @@ public class Transformer implements ClassFileTransformer
         // label to the point to jump if the future is completed (isDone())
         Label futureIsDoneLabel = isContinued ? switchEntry.futureIsDoneLabel : new Label();
 
+
+        mv.visitMethodInsn(INVOKEINTERFACE, COMPLETION_STAGE_NAME, "toCompletableFuture", "()Ljava/util/concurrent/CompletableFuture;", true);
         mv.visitMethodInsn(INVOKEVIRTUAL, COMPLETABLE_FUTURE_NAME, "isDone", "()Z", false);
         // code: jump futureIsDoneLabel:
         mv.visitJumpInsn(IFNE, futureIsDoneLabel);
@@ -1168,6 +1171,7 @@ public class Transformer implements ClassFileTransformer
 
         fullFrame(mv, switchEntry.frame);
 
+        mv.visitMethodInsn(INVOKEINTERFACE, COMPLETION_STAGE_NAME, "toCompletableFuture", "()Ljava/util/concurrent/CompletableFuture;", true);
         mv.visitMethodInsn(INVOKEVIRTUAL, COMPLETABLE_FUTURE_NAME, JOIN_METHOD_NAME, JOIN_METHOD_DESC, false);
         // changing back the instruction list
         // end of instruction loop
@@ -1354,7 +1358,8 @@ public class Transformer implements ClassFileTransformer
         return opcode == Opcodes.INVOKESTATIC
                 && ASYNC_METHOD_NAME.equals(name)
                 && ASYNC_NAME.equals(owner)
-                && ASYNC_METHOD_DESC.equals(desc);
+                //&& ASYNC_METHOD_DESC.equals(desc)
+                ;
     }
 
     private boolean isAwaitInitCall(final MethodInsnNode methodIns)
@@ -1586,7 +1591,8 @@ public class Transformer implements ClassFileTransformer
                         {
                             // has Await.await
                             if (equalsUtf8(cr, ntAddress, ASYNC_METHOD_NAME)
-                                    && equalsUtf8(cr, ntAddress + 2, ASYNC_METHOD_DESC))
+                                //&& equalsUtf8(cr, ntAddress + 2, ASYNC_METHOD_DESC)
+                                    )
                             {
                                 return true;
                             }
