@@ -93,10 +93,10 @@ On your main class or as early as possible, call at least once:
 Async.init();
 ```
 Provided that your JVM has the capability enabled, this will start a runtime instrumentation agent.
+If you forget to invoke this function, the first call to `await` will initialize the system (and print a warning).
 
 This is a solution for testing and development, it has the least amount of configuration.
-It might interfere with jvm debugging. This alternative is present as a fallback.  
-If you forget to invoke this function, the first call to `await` will initialize the system (and print a warning).
+It might interfere with jvm debugging. This alternative is present as a fallback.
 
 #### Option 3 - Build time instrumentation, with Maven - Preferred
 
