@@ -26,43 +26,43 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.ea.async.maven.plugin.MainMojo;
+package com.ea.async.test;
 
-import org.apache.maven.plugin.testing.MojoRule;
-import org.junit.Ignore;
-import org.junit.Rule;
+import com.ea.async.Async;
+
 import org.junit.Test;
 
-import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.CompletableFuture;
 
-import static org.junit.Assert.assertNotNull;
+import static com.ea.async.Await.await;
+import static org.junit.Assert.assertEquals;
 
-public class MojoTest
+public class RuntimeInstrTest extends BaseTest
 {
-    @Rule
-    public MojoRule rule = new MojoRule()
+
+    private static class Basic
     {
-        @Override
-        protected void before() throws Throwable
+        static String concat(int i, long j, float f, double d, Object obj, boolean b)
         {
+            return i + ":" + j + ":" + f + ":" + d + ":" + obj + ":" + b;
         }
 
-        @Override
-        protected void after()
+        @Async
+        public CompletableFuture<String> doSomething(CompletableFuture<String> blocker, int var)
         {
+            return CompletableFuture.completedFuture(concat(var, 10_000_000_000L, 1.5f, 3.5d, await(blocker), true));
         }
-    };
-
-    @Test
-    @Ignore
-    public void testSomething()  throws Exception
-    {
-        System.out.println(new File(".").getAbsoluteFile());
-        MainMojo myMojo = (MainMojo)
-                rule.lookupEmptyMojo("orbit-async", "src/test/project-to-test/pom.xml");
-        assertNotNull(myMojo);
-        myMojo.execute();
     }
 
-    // TODO: add actual instumentation tests.
+    @Test
+    public void testInstrumentation() throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException
+    {
+        CompletableFuture<String> blocker = new CompletableFuture<>();
+        Basic basic = new Basic();
+        final CompletableFuture<String> res = basic.doSomething(blocker, 5);
+
+        blocker.complete("zzz");
+        assertEquals("5:10000000000:1.5:3.5:zzz:true", res.join());
+    }
 }

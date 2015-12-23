@@ -26,43 +26,49 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.ea.async.maven.plugin.MainMojo;
+package com.ea.async.test;
 
-import org.apache.maven.plugin.testing.MojoRule;
-import org.junit.Ignore;
-import org.junit.Rule;
+import com.ea.async.Async;
+
 import org.junit.Test;
 
-import java.io.File;
+import java.util.concurrent.CompletableFuture;
 
-import static org.junit.Assert.assertNotNull;
+import static com.ea.async.Await.await;
+import static org.junit.Assert.assertEquals;
 
-public class MojoTest
+public class JoinTest extends BaseTest
 {
-    @Rule
-    public MojoRule rule = new MojoRule()
+    public static class OtherJoinCalls
     {
-        @Override
-        protected void before() throws Throwable
+        @Async
+        public CompletableFuture<Object> doSomething(CompletableFuture<String> blocker)
         {
+            int local = 7;
+            String res = ":" + Math.max(local, await(blocker).length()) + ":" + join() + ":" + join(2, 3);
+            return CompletableFuture.completedFuture(res);
         }
 
-        @Override
-        protected void after()
+        public Object join()
         {
+            return 9;
         }
-    };
 
-    @Test
-    @Ignore
-    public void testSomething()  throws Exception
-    {
-        System.out.println(new File(".").getAbsoluteFile());
-        MainMojo myMojo = (MainMojo)
-                rule.lookupEmptyMojo("orbit-async", "src/test/project-to-test/pom.xml");
-        assertNotNull(myMojo);
-        myMojo.execute();
+        public Object join(int a, int b)
+        {
+            return a + b;
+        }
     }
 
-    // TODO: add actual instumentation tests.
+    @Test
+    public void testOtherJoinMethods() throws IllegalAccessException, InstantiationException
+    {
+        OtherJoinCalls a = new OtherJoinCalls();
+
+        CompletableFuture<String> blocker = new CompletableFuture<>();
+        final CompletableFuture<Object> res = a.doSomething(blocker);
+        blocker.complete("0123456789");
+        assertEquals(":10:9:5", res.join());
+    }
+
 }

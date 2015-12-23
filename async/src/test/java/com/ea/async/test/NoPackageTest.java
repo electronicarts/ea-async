@@ -26,43 +26,28 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.ea.async.maven.plugin.MainMojo;
+package com.ea.async.test;
 
-import org.apache.maven.plugin.testing.MojoRule;
-import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 
-import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.concurrent.CompletableFuture;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 
-public class MojoTest
+public class NoPackageTest extends BaseTest
 {
-    @Rule
-    public MojoRule rule = new MojoRule()
-    {
-        @Override
-        protected void before() throws Throwable
-        {
-        }
-
-        @Override
-        protected void after()
-        {
-        }
-    };
-
     @Test
-    @Ignore
-    public void testSomething()  throws Exception
+    public void testPackageLessClass() throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException
     {
-        System.out.println(new File(".").getAbsoluteFile());
-        MainMojo myMojo = (MainMojo)
-                rule.lookupEmptyMojo("orbit-async", "src/test/project-to-test/pom.xml");
-        assertNotNull(myMojo);
-        myMojo.execute();
-    }
 
-    // TODO: add actual instumentation tests.
+        Class<?> newClass = Class.forName("NoPackageAsync");
+        final Method method = newClass.getMethod("noPackageMethod", CompletableFuture.class, int.class);
+
+        CompletableFuture<String> blocker = new CompletableFuture<>();
+        final CompletableFuture<String> res = (CompletableFuture<String>) method.invoke(newClass.newInstance(), blocker, 5);
+        blocker.complete("zzz");
+        assertEquals("5:10000000000:1.5:3.5:zzz:true", res.join());
+    }
 }

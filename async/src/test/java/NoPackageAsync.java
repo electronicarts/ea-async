@@ -26,11 +26,11 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import com.ea.orbit.async.Async;
+import com.ea.async.Async;
 
 import java.util.concurrent.CompletableFuture;
 
-import static com.ea.orbit.async.Await.await;
+import static com.ea.async.Await.await;
 
 public class NoPackageAsync
 {

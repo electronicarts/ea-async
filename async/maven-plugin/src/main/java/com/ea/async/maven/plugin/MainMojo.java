@@ -26,43 +26,44 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.ea.async.maven.plugin.MainMojo;
+package com.ea.async.maven.plugin;
 
-import org.apache.maven.plugin.testing.MojoRule;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import java.io.File;
 
-import static org.junit.Assert.assertNotNull;
-
-public class MojoTest
+@Mojo(name = "instrument",
+        defaultPhase = LifecyclePhase.PROCESS_CLASSES,
+        requiresProject = false,
+        threadSafe = true,
+        requiresDependencyResolution = ResolutionScope.RUNTIME)
+@Execute(goal = "instrument", phase = LifecyclePhase.PROCESS_CLASSES)
+public class MainMojo extends AbstractAsyncMojo
 {
-    @Rule
-    public MojoRule rule = new MojoRule()
-    {
-        @Override
-        protected void before() throws Throwable
-        {
-        }
+    @Parameter(defaultValue = "${project.build.outputDirectory}", required = true)
+    private File classesDirectory;
 
-        @Override
-        protected void after()
-        {
-        }
-    };
-
-    @Test
-    @Ignore
-    public void testSomething()  throws Exception
+    protected String getType()
     {
-        System.out.println(new File(".").getAbsoluteFile());
-        MainMojo myMojo = (MainMojo)
-                rule.lookupEmptyMojo("orbit-async", "src/test/project-to-test/pom.xml");
-        assertNotNull(myMojo);
-        myMojo.execute();
+        return "main-classes";
     }
 
-    // TODO: add actual instumentation tests.
+    /**
+     * Return the main classes directory
+     */
+    protected File getClassesDirectory()
+    {
+        return classesDirectory;
+    }
+
+    @Override
+    public void execute() throws MojoExecutionException
+    {
+        super.execute();
+    }
 }

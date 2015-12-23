@@ -26,43 +26,17 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.ea.async.maven.plugin.MainMojo;
+package com.ea.async.instrumentation;
 
-import org.apache.maven.plugin.testing.MojoRule;
-import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 
-import java.io.File;
+import static org.junit.Assert.assertEquals;
 
-import static org.junit.Assert.assertNotNull;
-
-public class MojoTest
+public class ConstantTest
 {
-    @Rule
-    public MojoRule rule = new MojoRule()
-    {
-        @Override
-        protected void before() throws Throwable
-        {
-        }
-
-        @Override
-        protected void after()
-        {
-        }
-    };
-
     @Test
-    @Ignore
-    public void testSomething()  throws Exception
+    public void testSignalingConstant()
     {
-        System.out.println(new File(".").getAbsoluteFile());
-        MainMojo myMojo = (MainMojo)
-                rule.lookupEmptyMojo("orbit-async", "src/test/project-to-test/pom.xml");
-        assertNotNull(myMojo);
-        myMojo.execute();
+        assertEquals("Signaling constants must match", Transformer.EA_ASYNC_RUNNING, InitializeAsync.EA_ASYNC_RUNNING);
     }
-
-    // TODO: add actual instumentation tests.
 }

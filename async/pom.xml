@@ -56,8 +56,8 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     <archive>
                         <index>true</index>
                         <manifestEntries>
-                            <Premain-Class>com.ea.orbit.async.instrumentation.Premain</Premain-Class>
-                            <Agent-Class>com.ea.orbit.async.instrumentation.Agent</Agent-Class>
+                            <Premain-Class>com.ea.async.instrumentation.Premain</Premain-Class>
+                            <Agent-Class>com.ea.async.instrumentation.Agent</Agent-Class>
                             <Can-Redefine-Classes>true</Can-Redefine-Classes>
                             <Can-Retransform-Classes>true</Can-Retransform-Classes>
                         </manifestEntries>
@@ -104,15 +104,9 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <version>1.7.13</version>
         </dependency>
         <dependency>
-            <groupId>com.ea.orbit</groupId>
-            <artifactId>orbit-commons</artifactId>
-            <version>0.6.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.ea.orbit</groupId>
-            <artifactId>orbit-agent-loader</artifactId>
-            <version>0.6.2</version>
+            <groupId>com.ea.agentloader</groupId>
+            <artifactId>ea-agent-loader</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

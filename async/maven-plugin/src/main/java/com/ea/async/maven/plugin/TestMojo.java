@@ -26,43 +26,61 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.ea.async.maven.plugin.MainMojo;
+package com.ea.async.maven.plugin;
 
-import org.apache.maven.plugin.testing.MojoRule;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import java.io.File;
 
-import static org.junit.Assert.assertNotNull;
-
-public class MojoTest
+@Mojo(name = "instrument-test",
+        defaultPhase = LifecyclePhase.PROCESS_TEST_CLASSES,
+        requiresProject = false,
+        threadSafe = true,
+        executionStrategy = "always",
+        requiresDirectInvocation = false,
+        requiresDependencyResolution = ResolutionScope.TEST)
+@Execute(goal = "instrument-test", phase = LifecyclePhase.PROCESS_TEST_CLASSES)
+public class TestMojo extends AbstractAsyncMojo
 {
-    @Rule
-    public MojoRule rule = new MojoRule()
-    {
-        @Override
-        protected void before() throws Throwable
-        {
-        }
+    /**
+     * If set to <code>true</code> it will bypass instrumenting the unit tests entirely.
+     */
+    @Parameter(property = "maven.test.skip")
+    private boolean skip;
 
-        @Override
-        protected void after()
-        {
-        }
-    };
+    /**
+     * Directory containing the test classes files that should be instrumented
+     */
+    @Parameter(defaultValue = "${project.build.testOutputDirectory}", required = true)
+    private File testClassesDirectory;
 
-    @Test
-    @Ignore
-    public void testSomething()  throws Exception
+    protected String getType()
     {
-        System.out.println(new File(".").getAbsoluteFile());
-        MainMojo myMojo = (MainMojo)
-                rule.lookupEmptyMojo("orbit-async", "src/test/project-to-test/pom.xml");
-        assertNotNull(myMojo);
-        myMojo.execute();
+        return "test-classes";
     }
 
-    // TODO: add actual instumentation tests.
+    /**
+     * Return the test-classes directory.
+     */
+    protected File getClassesDirectory()
+    {
+        return testClassesDirectory;
+    }
+
+    public void execute() throws MojoExecutionException
+    {
+        if (skip)
+        {
+            getLog().info("Skipping the instrumentation of the test classes");
+        }
+        else
+        {
+            super.execute();
+        }
+    }
 }

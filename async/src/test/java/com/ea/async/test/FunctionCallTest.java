@@ -1,10 +1,10 @@
 /*
  Copyright (C) 2015 Electronic Arts Inc.  All rights reserved.
-
+ 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions
  are met:
-
+ 
  1.  Redistributions of source code must retain the above copyright
      notice, this list of conditions and the following disclaimer.
  2.  Redistributions in binary form must reproduce the above copyright
@@ -13,7 +13,7 @@
  3.  Neither the name of Electronic Arts, Inc. ("EA") nor the names of
      its contributors may be used to endorse or promote products derived
      from this software without specific prior written permission.
-
+ 
  THIS SOFTWARE IS PROVIDED BY ELECTRONIC ARTS AND ITS CONTRIBUTORS "AS IS" AND ANY
  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -26,43 +26,55 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.ea.async.maven.plugin.MainMojo;
+package com.ea.async.test;
 
-import org.apache.maven.plugin.testing.MojoRule;
-import org.junit.Ignore;
-import org.junit.Rule;
+import com.ea.async.Task;
+
 import org.junit.Test;
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
-import static org.junit.Assert.assertNotNull;
+import static com.ea.async.Await.await;
+import static org.junit.Assert.assertEquals;
 
-public class MojoTest
+public class FunctionCallTest extends BaseTest
 {
-    @Rule
-    public MojoRule rule = new MojoRule()
+    public static class TaskSomethingAsync
     {
-        @Override
-        protected void before() throws Throwable
+        private List<CompletableFuture> blockers = new ArrayList<>();
+
+        public Task<String> doSomething()
         {
+            String res1 = await(blocker());
+            return Task.fromValue(":" + res1);
         }
 
-        @Override
-        protected void after()
+        private CompletableFuture<String> blocker()
         {
+            final CompletableFuture<String> blocker = new CompletableFuture<>();
+            blockers.add(blocker);
+            return blocker;
         }
-    };
 
-    @Test
-    @Ignore
-    public void testSomething()  throws Exception
-    {
-        System.out.println(new File(".").getAbsoluteFile());
-        MainMojo myMojo = (MainMojo)
-                rule.lookupEmptyMojo("orbit-async", "src/test/project-to-test/pom.xml");
-        assertNotNull(myMojo);
-        myMojo.execute();
+        public void completeBlockers()
+        {
+            for (int i = 0; i < blockers.size(); i++)
+            {
+                final CompletableFuture<String> fut = blockers.get(i);
+                fut.complete("str " + i);
+            }
+        }
     }
 
-    // TODO: add actual instumentation tests.
+    @Test
+    public void testBlockingAndException() throws IllegalAccessException, InstantiationException
+    {
+        final TaskSomethingAsync a = new TaskSomethingAsync();
+
+        Task<String> res = a.doSomething();
+        a.completeBlockers();
+        assertEquals(":str 0", res.join());
+    }
 }

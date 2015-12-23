@@ -26,43 +26,48 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.ea.async.maven.plugin.MainMojo;
+package com.ea.async.instrumentation;
 
-import org.apache.maven.plugin.testing.MojoRule;
-import org.junit.Ignore;
-import org.junit.Rule;
+import com.ea.async.Await;
+
+import com.ea.async.test.BaseTest;
+import com.ea.async.Task;
+
 import org.junit.Test;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.tree.analysis.AnalyzerException;
 
-import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
-public class MojoTest
+public class ErrorReportingTest extends BaseTest
 {
-    @Rule
-    public MojoRule rule = new MojoRule()
+      public static class InvalidAwaitCall
     {
-        @Override
-        protected void before() throws Throwable
+        public void invalidAwaitCall(Task task)
         {
+            Await.await(task);
         }
-
-        @Override
-        protected void after()
-        {
-        }
-    };
-
-    @Test
-    @Ignore
-    public void testSomething()  throws Exception
-    {
-        System.out.println(new File(".").getAbsoluteFile());
-        MainMojo myMojo = (MainMojo)
-                rule.lookupEmptyMojo("orbit-async", "src/test/project-to-test/pom.xml");
-        assertNotNull(myMojo);
-        myMojo.execute();
     }
 
-    // TODO: add actual instumentation tests.
+    @Test
+    public void testErrorReporting() throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException, IOException, AnalyzerException
+    {
+        ClassReader cr = new ClassReader(InvalidAwaitCall.class.getResourceAsStream(InvalidAwaitCall.class.getName().replaceAll("^.*[.]", "") + ".class"));
+        assertTrue(mentionsAwait(cr));
+
+        AtomicReference<String> reference = new AtomicReference<>();
+        final Transformer transformer = new Transformer();
+        transformer.setErrorListener(t -> reference.set(t));
+
+        final byte[] bytes = transformer.transform(cr);
+        assertNotNull(reference.get());
+        assertTrue(reference.get().contains("invalidAwaitCall"));
+
+        ClassReader cr2 = new ClassReader(bytes);
+        assertFalse(mentionsAwait(cr2));
+    }
 }

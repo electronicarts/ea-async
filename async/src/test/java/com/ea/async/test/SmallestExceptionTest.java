@@ -26,43 +26,40 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.ea.async.maven.plugin.MainMojo;
+package com.ea.async.test;
 
-import org.apache.maven.plugin.testing.MojoRule;
-import org.junit.Ignore;
-import org.junit.Rule;
+import com.ea.async.Task;
+
 import org.junit.Test;
 
-import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 
-import static org.junit.Assert.assertNotNull;
+import static com.ea.async.Await.await;
+import static org.junit.Assert.assertNull;
 
-public class MojoTest
+public class SmallestExceptionTest extends BaseTest
 {
-    @Rule
-    public MojoRule rule = new MojoRule()
-    {
-        @Override
-        protected void before() throws Throwable
-        {
-        }
-
-        @Override
-        protected void after()
-        {
-        }
-    };
 
     @Test
-    @Ignore
-    public void testSomething()  throws Exception
+    public void testRepeatedLocalVarsNames() throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException
     {
-        System.out.println(new File(".").getAbsoluteFile());
-        MainMojo myMojo = (MainMojo)
-                rule.lookupEmptyMojo("orbit-async", "src/test/project-to-test/pom.xml");
-        assertNotNull(myMojo);
-        myMojo.execute();
+        final Task<Void> res = doIt();
+        completeFutures();
+        assertNull(res.join());
     }
 
-    // TODO: add actual instumentation tests.
+
+    private Task<Void> doIt()
+    {
+        try
+        {
+            await(getBlockedTask());
+            return Task.done();
+        }
+        catch (Exception ex)
+        {
+            return Task.done();
+        }
+    }
+
 }

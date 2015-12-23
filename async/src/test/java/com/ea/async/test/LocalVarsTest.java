@@ -26,43 +26,57 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.ea.async.maven.plugin.MainMojo;
+package com.ea.async.test;
 
-import org.apache.maven.plugin.testing.MojoRule;
-import org.junit.Ignore;
-import org.junit.Rule;
+import com.ea.async.Task;
+
 import org.junit.Test;
 
-import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 
-import static org.junit.Assert.assertNotNull;
+import static com.ea.async.Await.await;
+import static com.ea.async.Task.done;
+import static com.ea.async.Task.fromValue;
+import static org.junit.Assert.assertEquals;
 
-public class MojoTest
+public class LocalVarsTest extends BaseTest
 {
-    @Rule
-    public MojoRule rule = new MojoRule()
-    {
-        @Override
-        protected void before() throws Throwable
-        {
-        }
-
-        @Override
-        protected void after()
-        {
-        }
-    };
 
     @Test
-    @Ignore
-    public void testSomething()  throws Exception
+    public void testRepeatedLocalVarsNames() throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException
     {
-        System.out.println(new File(".").getAbsoluteFile());
-        MainMojo myMojo = (MainMojo)
-                rule.lookupEmptyMojo("orbit-async", "src/test/project-to-test/pom.xml");
-        assertNotNull(myMojo);
-        myMojo.execute();
+        final Task<Integer> res = done().thenCompose(o -> {
+            {
+                String a = "a1";
+            }
+            await(getBlockedTask());
+            {
+                String a = "a2";
+            }
+            return fromValue(10);
+        });
+        completeFutures();
+        assertEquals((Integer) 10, res.join());
     }
 
-    // TODO: add actual instumentation tests.
+    @Test
+    public void testRepeatedLocalVarsNames2() throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException
+    {
+        final Task<Integer> res = done().thenCompose(o -> {
+            {
+                String a = "a1";
+                String b = "b1";
+                int c = 1;
+            }
+            await(getBlockedTask());
+            {
+                String a = "a2";
+                String b = "b2";
+                int c = 10;
+                return fromValue((Integer)c);
+            }
+        });
+        completeFutures();
+        assertEquals((Integer) 10, res.join());
+    }
 }

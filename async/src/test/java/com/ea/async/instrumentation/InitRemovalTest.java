@@ -26,43 +26,39 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.ea.async.maven.plugin.MainMojo;
+package com.ea.async.instrumentation;
 
-import org.apache.maven.plugin.testing.MojoRule;
-import org.junit.Ignore;
-import org.junit.Rule;
+import com.ea.async.Await;
+import com.ea.async.test.BaseTest;
+
 import org.junit.Test;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.tree.analysis.AnalyzerException;
 
-import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-public class MojoTest
+public class InitRemovalTest extends BaseTest
 {
-    @Rule
-    public MojoRule rule = new MojoRule()
+    public static class StaticUse
     {
-        @Override
-        protected void before() throws Throwable
+        public static void callInit()
         {
+            Await.init();
         }
-
-        @Override
-        protected void after()
-        {
-        }
-    };
-
-    @Test
-    @Ignore
-    public void testSomething()  throws Exception
-    {
-        System.out.println(new File(".").getAbsoluteFile());
-        MainMojo myMojo = (MainMojo)
-                rule.lookupEmptyMojo("orbit-async", "src/test/project-to-test/pom.xml");
-        assertNotNull(myMojo);
-        myMojo.execute();
     }
 
-    // TODO: add actual instumentation tests.
+    @Test
+    public void testAwaitInitRemoval() throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException, IOException, AnalyzerException
+    {
+        StaticUse.callInit();
+        ClassReader cr = new ClassReader(StaticUse.class.getResourceAsStream(StaticUse.class.getName().replaceAll("^.*[.]", "") + ".class"));
+        assertTrue(mentionsAwait(cr));
+        final byte[] bytes = new Transformer().transform(cr);
+        ClassReader cr2 = new ClassReader(bytes);
+        assertFalse(mentionsAwait(cr2));
+    }
 }

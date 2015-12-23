@@ -1,10 +1,10 @@
 /*
  Copyright (C) 2015 Electronic Arts Inc.  All rights reserved.
-
+ 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions
  are met:
-
+ 
  1.  Redistributions of source code must retain the above copyright
      notice, this list of conditions and the following disclaimer.
  2.  Redistributions in binary form must reproduce the above copyright
@@ -13,7 +13,7 @@
  3.  Neither the name of Electronic Arts, Inc. ("EA") nor the names of
      its contributors may be used to endorse or promote products derived
      from this software without specific prior written permission.
-
+ 
  THIS SOFTWARE IS PROVIDED BY ELECTRONIC ARTS AND ITS CONTRIBUTORS "AS IS" AND ANY
  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -26,43 +26,40 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.ea.async.maven.plugin.MainMojo;
+package com.ea.async.test;
 
-import org.apache.maven.plugin.testing.MojoRule;
-import org.junit.Ignore;
-import org.junit.Rule;
+import com.ea.async.Task;
+
 import org.junit.Test;
 
-import java.io.File;
+import static com.ea.async.Await.await;
+import static com.ea.async.Task.fromValue;
+import static org.junit.Assert.assertEquals;
 
-import static org.junit.Assert.assertNotNull;
-
-public class MojoTest
+public class LambdaTest extends BaseTest
 {
-    @Rule
-    public MojoRule rule = new MojoRule()
-    {
-        @Override
-        protected void before() throws Throwable
-        {
-        }
-
-        @Override
-        protected void after()
-        {
-        }
-    };
-
     @Test
-    @Ignore
-    public void testSomething()  throws Exception
+    public void testThenCompose()
     {
-        System.out.println(new File(".").getAbsoluteFile());
-        MainMojo myMojo = (MainMojo)
-                rule.lookupEmptyMojo("orbit-async", "src/test/project-to-test/pom.xml");
-        assertNotNull(myMojo);
-        myMojo.execute();
+        Task<Integer> task = getBlockedTask(10)
+                .thenCompose(x -> fromValue(x + await(getBlockedFuture(20))));
+        completeFutures();
+        assertEquals((Integer) 30, task.join());
     }
 
-    // TODO: add actual instumentation tests.
+
+    @Test
+    public void testLongLambda()
+    {
+        Task<Integer> task = getBlockedTask(5)
+                .thenCompose(x -> {
+                    await(getBlockedTask());
+                    await(getBlockedTask());
+                    await(getBlockedTask());
+                    await(getBlockedTask());
+                    return fromValue(11);
+                });
+        completeFutures();
+        assertEquals((Integer) 11, task.join());
+    }
 }

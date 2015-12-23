@@ -26,43 +26,29 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.ea.async.maven.plugin.MainMojo;
+package com.ea.async.instrumentation;
 
-import org.apache.maven.plugin.testing.MojoRule;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import java.lang.instrument.Instrumentation;
 
-import java.io.File;
-
-import static org.junit.Assert.assertNotNull;
-
-public class MojoTest
+/**
+ * Class called when the jvm option -javaagent is used with the orbit-async jar.
+ */
+public class Premain
 {
-    @Rule
-    public MojoRule rule = new MojoRule()
+    /*
+     * From https://docs.oracle.com/javase/8/docs/api/index.html?java/lang/instrument/Instrumentation.html
+     *
+     * Premain-Class
+     *
+     * When an agent is specified at JVM launch time this attribute specifies
+     * the agent class. That is, the class containing the premain method.
+     * When an agent is specified at JVM launch time this attribute is required.
+     * If the attribute is not present the JVM will abort. Note: this is a class
+     * name, not a file name or path.
+     */
+    public static void premain(String agentArgs, Instrumentation inst)
     {
-        @Override
-        protected void before() throws Throwable
-        {
-        }
-
-        @Override
-        protected void after()
-        {
-        }
-    };
-
-    @Test
-    @Ignore
-    public void testSomething()  throws Exception
-    {
-        System.out.println(new File(".").getAbsoluteFile());
-        MainMojo myMojo = (MainMojo)
-                rule.lookupEmptyMojo("orbit-async", "src/test/project-to-test/pom.xml");
-        assertNotNull(myMojo);
-        myMojo.execute();
+        inst.addTransformer(new Transformer(), true);
+        System.setProperty(Transformer.EA_ASYNC_RUNNING, "true");
     }
-
-    // TODO: add actual instumentation tests.
 }
