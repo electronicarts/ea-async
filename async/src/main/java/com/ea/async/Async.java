@@ -37,23 +37,35 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 /**
- * In methods annotated with {@literal @}Async calls to <code>await(future)</code>
- * will cause the method to return a CompletableFuture (or Task) instead of blocking.
+ * This class together with bytecode instrumentation implements the async-await functionality in the JVM.
  * <p/>
- * This is equivalent to use CompletableFuture composition methods (ex: thenApply, handle).
+ * To use it call <code>Async.await(future)</code> from withing methods whose return type is
+ * CompletionStage, CompletableFuture or subclasses of CompletableFuture.
+ * <p/>
+ * <code>Async.await(future)</code> won't block. It is semantically equivalent to call <code>future.join()</code>
+ * But instead of blocking the code in instrumented to become a state machine that evolves as the futures passed
+ * to <code>await</code> are completed.
+ * <p/>
+ * This is equivalent to use CompletableFuture composition methods (ex: thenApply, handle, thenCompose).
  * The advantage of using <code>await</code> is that the code will resemble sequential blocking code.
  * <p/>
  * Example:
  * <pre><code>
- * import static Async.await;
- * ...
+ * import static com.ea.async.Async.await;
+ * import static java.util.concurrent.CompletableFuture.completedFuture;*
  *
- * CompletableFuture<Integer> getPageLengthAsync()
+ * public class Store
  * {
- *     CompletableFuture<String> pageFuture = getPageAsync("http://example.com");
- *     String page = await(pageFuture);
- *     return CompletableFuture.completedFuture(page.length);
- * }</code></pre>
+ *     public CompletableFuture<Boolean> buyItem(String itemTypeId, int cost)
+ *     {
+ *         if(!await(bank.decrement(cost))) {
+ *             return completedFuture(false);
+ *         }
+ *         await(inventory.giveItem(itemTypeId));
+ *         return completedFuture(true);
+ *     }
+ * }
+ * </code></pre>
  */
 public class Async
 {
@@ -70,21 +82,22 @@ public class Async
     private static Logger logger;
 
     /**
-     * This method will behave as a CompletableFuture.join() but will actually cause the
+     * This method will behave as a <code>CompletableFuture.join()</code> but will actually cause the
      * caller to return a promise instead of blocking.
      *
      * Calls to this method are replaced by the EA Async instrumentation.
      *
      * @param future a future to wait for.
-     * @param <T>    the return type of future.join()
+     * @param <T>    the future value type.
      * @return the return value of the future
+     * @throws java.util.concurrent.CompletionException wrapping the actual exception if an exception occured.
      */
     public static <T, F extends CompletionStage<T>> T await(F future)
     {
         String warning;
         if (!InitializeAsync.isRunning())
         {
-            warning = "Warning: Illegal call to await, static { Await.init(); } must be added to the main program class and the method invoking await must return a CompletableFuture";
+            warning = "Warning: Illegal call to await, static { Async.init(); } must be added to the main program class and the method invoking await must return a CompletableFuture";
         }
         else
         {

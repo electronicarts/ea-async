@@ -12,6 +12,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Tool class to perform build time instrumentation.
+ */
 public class Main
 {
     private boolean verbose;
