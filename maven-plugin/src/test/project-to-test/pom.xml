@@ -58,6 +58,14 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+
+            <plugin>
                 <groupId>com.ea.async</groupId>
                 <artifactId>ea-async-maven-plugin</artifactId>
                 <version>${ea.async.version}</version>
@@ -75,14 +83,17 @@
                     <verbose>true</verbose>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
     <dependencies>
+
         <dependency>
             <groupId>com.ea.async</groupId>
             <artifactId>ea-async</artifactId>
             <version>${ea.async.version}</version>
         </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
