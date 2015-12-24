@@ -69,7 +69,7 @@ public class Main
             {
                 Files.walk(path)
                         .filter(Files::isRegularFile)
-                        .filter(p -> p.endsWith(".class"))
+                        .filter(p -> p.toString().endsWith(".class"))
                         .forEach(fileList::add);
                 continue;
             }

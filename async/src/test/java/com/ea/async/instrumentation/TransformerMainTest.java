@@ -43,9 +43,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 import static org.objectweb.asm.Opcodes.*;
 
 public class TransformerMainTest extends BaseTest
@@ -77,6 +75,7 @@ public class TransformerMainTest extends BaseTest
 
         final Main main = new Main();
         final Path path = Paths.get("target/classes2").resolve(cn.name + ".class");
+        Files.deleteIfExists(path);
         Files.createDirectories(path.getParent());
         Files.write(path, cw.toByteArray());
 
@@ -85,9 +84,19 @@ public class TransformerMainTest extends BaseTest
         assertFalse(Arrays.equals(bytes, original));
 
         final Path path3 = Paths.get("target/classes3").resolve(cn.name + ".class");
+        Files.deleteIfExists(path3);
         // in output dir
         main.doMain(new String[]{ "-d", "target/classes3", path.toString() });
         assertArrayEquals(bytes, Files.readAllBytes(path3));
+        // still unchanged
+        assertArrayEquals(original, Files.readAllBytes(path));
+
+        // passing a dir as parameter
+        final Path path4 = Paths.get("target/classes4").resolve(cn.name + ".class");
+        Files.deleteIfExists(path4);
+        main.doMain(new String[]{ "-d", "target/classes4", path.getParent().toString() });
+        assertTrue("Can't find file: " + path4, Files.exists(path4));
+        assertArrayEquals(bytes, Files.readAllBytes(path4));
         // still unchanged
         assertArrayEquals(original, Files.readAllBytes(path));
 
@@ -95,6 +104,9 @@ public class TransformerMainTest extends BaseTest
         main.doMain(new String[]{ path.toString() });
         assertArrayEquals(bytes, Files.readAllBytes(path));
         assertFalse(Arrays.equals(original, Files.readAllBytes(path)));
+
+
     }
+
 
 }
