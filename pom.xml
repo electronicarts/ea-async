@@ -32,7 +32,9 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <version>0.9.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>EA Async Parent</name>
-    <description>EA Async implements async-await methods in the JVM. It allows programmers to write asynchronous code in a sequential fashion.</description>
+    <description>EA Async implements async-await methods in the JVM. It allows programmers to write asynchronous code in
+        a sequential fashion.
+    </description>
     <url>https://github.com/electronicarts/ea-async/</url>
 
     <properties>
@@ -47,8 +49,8 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <module>maven-plugin</module>
         <module>maven-plugin/src/test/project-to-test</module>
     </modules>
-	
-	<dependencyManagement>
+
+    <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>junit</groupId>
@@ -71,7 +73,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <url>http://www.ea.com</url>
         </developer>
     </developers>
-	
+
     <organization>
         <name>Electronic Arts Inc</name>
         <url>http://www.ea.com</url>
@@ -101,7 +103,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     <artifactId>maven-gpg-plugin</artifactId>
                     <version>1.6</version>
                 </plugin>
-				<plugin>
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.18.1</version>
@@ -121,8 +123,13 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     <artifactId>maven-shade-plugin</artifactId>
                     <version>2.4.1</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.codehaus.gmaven</groupId>
+                    <artifactId>groovy-maven-plugin</artifactId>
+                    <version>2.0</version>
+                </plugin>
             </plugins>
-            
+
         </pluginManagement>
 
         <plugins>
@@ -187,6 +194,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 </repository>
             </distributionManagement>
         </profile>
+
         <profile>
             <id>stageRelease</id>
             <build>
@@ -229,6 +237,30 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.gmaven</groupId>
+                        <artifactId>groovy-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>execute</goal>
+                                </goals>
+                                <configuration>
+                                    <source>
+                                        run(new File("updateDocs.groovy"), "${project.version}")
+                                    </source>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.codehaus.groovy</groupId>
+                                <artifactId>groovy-all</artifactId>
+                                <version>2.4.5</version>
+                            </dependency>
+                        </dependencies>
                     </plugin>
                 </plugins>
             </build>
