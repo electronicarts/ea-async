@@ -17,6 +17,7 @@ Files.walk(Paths.get(".")).forEach({ f ->
         text = new String(Files.readAllBytes(f), StandardCharsets.UTF_8);
         modifiedText = text.replaceAll("<version>[^<]*</version>", (String) ("<version>" + version + "</version>"))
         modifiedText = modifiedText.replaceAll("ea-async-[.0-9a-zA-Z_-]+[.]jar", (String) ("ea-async-" + version + ".jar"))
+        modifiedText = modifiedText.replaceAll("(com[.]ea[.]async[:]ea-async[:])[^']*[']", (String) ("com.ea.async:ea-async:" + version + "'"))
     }
     if (f.toString().matches(".*project-to-test[/\\\\]pom[.]xml\$")) {
         // sample project

@@ -122,6 +122,12 @@ The only requirement to use EA Async is that must be used only inside methods th
 </dependency>
 ```
 
+### Gradle
+
+```
+'com.ea.async:ea-async:0.9.1'
+```
+
 ### Instrumenting your code
 
 #### Option 1 - JVM parameter
@@ -131,7 +137,7 @@ Start your application with an extra JVM parameter: `-javaagent:ea-async-0.9.1.j
  java -javaagent:ea-async-0.9.1.jar -cp your_claspath YourMainClass args...
 ```
 
-It's recommended to add this as a default option to launchers in intellij projects that use ea-async.  
+It's recommended to add this as a default option to launchers in intellij projects that use ea-async.
 
 #### Option 2 - Runtime
 On your main class or as early as possible, call at least once:
@@ -166,7 +172,7 @@ There will be no references to `Async.await` and `Async.init` left in those clas
 
 #### Option 4 - Build time instrumentation, with Maven - Preferred
 
-Use the [ea-async-maven-plugin](maven-plugin). It will instrument your classes in compile time and 
+Use the [ea-async-maven-plugin](maven-plugin). It will instrument your classes in compile time and
 remove all references to `Async.await` and `Async.init()`.
 
 With build time instrumentation your project users won't need to have EA Async in their classpath unless they also choose to use it.
