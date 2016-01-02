@@ -6,16 +6,16 @@ EA Async
 [![Javadocs](https://img.shields.io/maven-central/v/com.ea.async/ea-async.svg?label=Javadocs)](http://www.javadoc.io/doc/com.ea.async/ea-async)
 [![Build Status](https://img.shields.io/travis/electronicarts/ea-async.svg)](https://travis-ci.org/electronicarts/ea-async)
 
-EA Async implements async-await methods in the JVM.
+EA Async implements Async-Await methods in the JVM.
 It allows programmers to write asynchronous code in a sequential fashion.
 It was developed by [BioWare](http://www.bioware.com), a division of [Electronic Arts](http://www.ea.com) and was originally part of the [Orbit Project](https://github.com/electronicarts/orbit).
 
-If you're looking for async await on the .NET CLR, see [Asynchronous Programming with Async and Await](https://msdn.microsoft.com/en-us/library/hh191443.aspx).
+It is heavily inspired by Async-Await on the .NET CLR, see [Asynchronous Programming with Async and Await](https://msdn.microsoft.com/en-us/library/hh191443.aspx) for more information.
 
 Who should use it?
 ------
 
-EA Async should be used to write non blocking asynchronous code that makes heavy use of CompletableFutures or CompletionStage.
+EA Async should be used to write non-blocking asynchronous code that makes heavy use of CompletableFutures or CompletionStage.
 It improves scalability by freeing worker threads while your code awaits other processes;
 And improves productivity by making asynchronous code simpler and more readable.
 
@@ -45,7 +45,7 @@ public class Store
 ```
 In this example `Bank.decrement` returns `CompletableFuture<Boolean>` and `Inventory.giveItem` returns `CompletableFuture<String>`
 
-EA Async rewrites the calls to `Async.await` making your methods non blocking.
+EA Async rewrites the calls to `Async.await` making your methods non-blocking.
 
 The methods look blocking but are actually transformed into asynchronous methods that use
 CompletableFutures to continue the execution as intermediary results arrive.
@@ -77,7 +77,7 @@ EA Async abstracts away the complexity of the CompletableFutures.
 
 #### With EA Async (2)
 
-So you like CompletableFutures.
+So you like CompletableFutures?
 Try converting this method to use only CompletableFutures without ever blocking (so no joining):
 
 ```java
@@ -102,14 +102,14 @@ public class Store
 }
 ```
 
-Got it? Send it [to us](https://github.com/electronicarts/ea-async/issues/new). I bet it looks ugly...
+Got it? Send it [to us](https://github.com/electronicarts/ea-async/issues/new). It probably looks ugly...
 
 Getting started
 ---------------
 
 EA Async requires JVM 1.8.x.
 
-It works with java and scala and with most JVM languages.
+It works with Java and Scala and should work with most JVM languages.
 The only requirement to use EA Async is that must be used only inside methods that return `CompletableFuture`, `CompletionStage`, or subclasses of `CompletableFuture`.
 
 ### Using with maven
