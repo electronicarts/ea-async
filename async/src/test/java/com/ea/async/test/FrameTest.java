@@ -43,7 +43,7 @@ public class FrameTest extends BaseTest
     @Test
     public void smallTest() throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException
     {
-        // this test fails if using COMPUTE_FRAMES in the transformer;
+        // this test fails if using COMPUTE_FRAMES in the transformerError;
         final Task<?> res = doIt(getBlockedTask(1));
         completeFutures();
         assertEquals(1, res.join());
@@ -68,7 +68,7 @@ public class FrameTest extends BaseTest
     @Test
     public void bigTest() throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException
     {
-        // this test fails if using COMPUTE_FRAMES in the transformer;
+        // this test fails if using COMPUTE_FRAMES in the transformerError;
         final Task<?> res = big(getBlockedTask(1));
         completeFutures();
         assertEquals(1, res.join());
@@ -112,7 +112,7 @@ public class FrameTest extends BaseTest
     @Test
     public void stackTest() throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException
     {
-        // this test fails if using COMPUTE_FRAMES in the transformer;
+        // this test fails if using COMPUTE_FRAMES in the transformerError;
         final Task<?> res = stack(getBlockedTask(1));
         completeFutures();
         assertEquals(1, res.join());

@@ -87,6 +87,7 @@ public class Main
     public int transform() throws IOException
     {
         final Transformer transformer = new Transformer();
+        transformer.setErrorListener(System.err::println);
         boolean error = false;
         int count = 0;
         final Path outputDir = getOutputDirectory();
