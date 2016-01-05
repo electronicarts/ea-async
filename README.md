@@ -137,7 +137,7 @@ Start your application with an extra JVM parameter: `-javaagent:ea-async-1.0.1.j
  java -javaagent:ea-async-1.0.1.jar -cp your_claspath YourMainClass args...
 ```
 
-It's recommended to add this as a default option to launchers in intellij projects that use ea-async.
+It's recommended to add this as a default option to launchers in IntelliJ projects that use ea-async.
 
 #### Option 2 - Runtime
 On your main class or as early as possible, call at least once:
@@ -148,11 +148,11 @@ Provided that your JVM has the capability enabled, this will start a runtime ins
 If you forget to invoke this function, the first call to `await` will initialize the system (and print a warning).
 
 This is a solution for testing and development, it has the least amount of configuration.
-It might interfere with jvm debugging. This alternative is present as a fallback.
+It might interfere with JVM debugging. This alternative is present as a fallback.
 
 #### Option 3 - Run instrumentation tool
 
-The ea-async-1.0.1.jar is a runnable jar that can pre-instrument your files (since version 0.9.1)
+The ea-async-1.0.1.jar is a runnable jar that can pre-instrument your files.
 
 Usage:
 
