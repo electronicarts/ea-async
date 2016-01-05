@@ -57,4 +57,21 @@ public class CompletionStageTest extends BaseTest
         assertEquals(3, (int) res.toCompletableFuture().join());
     }
 
+    @Test
+    public void completionStageArgument() {
+        class Experiment
+        {
+
+            CompletionStage<Integer> doIt(CompletionStage<Integer> stage, int b) {
+                int a = await(stage);
+                return CompletableFuture.completedFuture(a + b);
+            }
+        }
+        CompletionStage<Integer> task = getBlockedTask(1);
+        CompletionStage<Integer> res = new Experiment().doIt(task, 2);
+
+        completeFutures();
+        assertEquals(3, (int) res.toCompletableFuture().join());
+    }
+    
 }
