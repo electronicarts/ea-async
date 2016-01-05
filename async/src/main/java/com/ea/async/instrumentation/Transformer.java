@@ -1078,7 +1078,11 @@ public class Transformer implements ClassFileTransformer
         Label futureIsDoneLabel = isContinued ? switchEntry.futureIsDoneLabel : new Label();
 
 
-        mv.visitMethodInsn(INVOKEINTERFACE, COMPLETION_STAGE_NAME, "toCompletableFuture", "()Ljava/util/concurrent/CompletableFuture;", true);
+        final boolean needsConversion = switchEntry == null || !checkType(switchEntry.frame, COMPLETABLE_FUTURE_TYPE);
+        if (needsConversion)
+        {
+            mv.visitMethodInsn(INVOKEINTERFACE, COMPLETION_STAGE_NAME, "toCompletableFuture", "()Ljava/util/concurrent/CompletableFuture;", true);
+        }
         mv.visitMethodInsn(INVOKEVIRTUAL, COMPLETABLE_FUTURE_NAME, "isDone", "()Z", false);
         // code: jump futureIsDoneLabel:
         mv.visitJumpInsn(IFNE, futureIsDoneLabel);
@@ -1098,7 +1102,14 @@ public class Transformer implements ClassFileTransformer
         // stack: { future identity_function }
         // this discards any exception. the exception will be thrown by calling join.
         // the other option is not to use thenCompose and use something more complex.
-        mv.visitMethodInsn(INVOKEVIRTUAL, COMPLETABLE_FUTURE_NAME, "exceptionally", "(Ljava/util/function/Function;)Ljava/util/concurrent/CompletableFuture;", false);
+        if (needsConversion)
+        {
+            mv.visitMethodInsn(INVOKEINTERFACE, COMPLETION_STAGE_NAME, "exceptionally", "(Ljava/util/function/Function;)Ljava/util/concurrent/CompletionStage;", true);
+        }
+        else
+        {
+            mv.visitMethodInsn(INVOKEVIRTUAL, COMPLETABLE_FUTURE_NAME, "exceptionally", "(Ljava/util/function/Function;)Ljava/util/concurrent/CompletableFuture;", false);
+        }
         // stack: { new_future }
 
         // code:    return future.exceptionally(x -> x).thenCompose(x -> _func(state));
@@ -1116,7 +1127,18 @@ public class Transformer implements ClassFileTransformer
 
 
         // stack: { new_future function }
-        mv.visitMethodInsn(INVOKEVIRTUAL, COMPLETABLE_FUTURE_NAME, "thenCompose", "(Ljava/util/function/Function;)Ljava/util/concurrent/CompletableFuture;", false);
+        if (needsConversion)
+        {
+            mv.visitMethodInsn(INVOKEINTERFACE, COMPLETION_STAGE_NAME, "thenCompose", "(Ljava/util/function/Function;)Ljava/util/concurrent/CompletionStage;", true);
+        }
+        else
+        {
+            mv.visitMethodInsn(INVOKEVIRTUAL, COMPLETABLE_FUTURE_NAME, "thenCompose", "(Ljava/util/function/Function;)Ljava/util/concurrent/CompletableFuture;", false);
+        }
+        if (needsConversion)
+        {
+            mv.visitMethodInsn(INVOKEINTERFACE, COMPLETION_STAGE_NAME, "toCompletableFuture", "()Ljava/util/concurrent/CompletableFuture;", true);
+        }
         // stack: { new_future_02 }
         if (!isContinued && nonCompFutReturn)
         {
@@ -1171,10 +1193,26 @@ public class Transformer implements ClassFileTransformer
 
         fullFrame(mv, switchEntry.frame);
 
-        mv.visitMethodInsn(INVOKEINTERFACE, COMPLETION_STAGE_NAME, "toCompletableFuture", "()Ljava/util/concurrent/CompletableFuture;", true);
+        if (needsConversion)
+        {
+            mv.visitMethodInsn(INVOKEINTERFACE, COMPLETION_STAGE_NAME, "toCompletableFuture", "()Ljava/util/concurrent/CompletableFuture;", true);
+        }
         mv.visitMethodInsn(INVOKEVIRTUAL, COMPLETABLE_FUTURE_NAME, JOIN_METHOD_NAME, JOIN_METHOD_DESC, false);
         // changing back the instruction list
         // end of instruction loop
+    }
+
+    private boolean checkType(final FrameAnalyzer.ExtendedFrame frame, final Type type)
+    {
+        if (frame != null)
+        {
+            final BasicValue value = frame.getStack(frame.getStackSize() - 1);
+            if (value != null && value.getType() != null && type.equals(value.getType()))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void generateCheckCast(final ClassNode classNode, final String castFunction, final String retType)

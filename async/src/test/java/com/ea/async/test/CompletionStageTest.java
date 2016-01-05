@@ -34,6 +34,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 import static com.ea.async.Async.await;
+import static java.util.concurrent.CompletableFuture.completedFuture;
 import static org.junit.Assert.assertEquals;
 
 public class CompletionStageTest extends BaseTest
@@ -55,6 +56,25 @@ public class CompletionStageTest extends BaseTest
 
         completeFutures();
         assertEquals(3, (int) res.toCompletableFuture().join());
+    }
+
+
+    @Test
+    public void completionStageParam()
+    {
+        class Experiment
+        {
+
+            CompletionStage<String> doIt(CompletionStage<String> stage)
+            {
+                String result = await(stage);
+                return completedFuture(result);
+            }
+        }
+        final CompletableFuture<String> future = new CompletableFuture<>();
+        CompletionStage<String> res = new Experiment().doIt(future);
+        future.complete("test");
+        assertEquals("test", res.toCompletableFuture().join());
     }
 
 }
