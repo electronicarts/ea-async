@@ -118,23 +118,23 @@ The only requirement to use EA Async is that must be used only inside methods th
 <dependency>
     <groupId>com.ea.async</groupId>
     <artifactId>ea-async</artifactId>
-    <version>0.9.1</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```
-'com.ea.async:ea-async:0.9.1'
+'com.ea.async:ea-async:1.0.0'
 ```
 
 ### Instrumenting your code
 
 #### Option 1 - JVM parameter
 
-Start your application with an extra JVM parameter: `-javaagent:ea-async-0.9.1.jar`
+Start your application with an extra JVM parameter: `-javaagent:ea-async-1.0.0.jar`
 ```
- java -javaagent:ea-async-0.9.1.jar -cp your_claspath YourMainClass args...
+ java -javaagent:ea-async-1.0.0.jar -cp your_claspath YourMainClass args...
 ```
 
 It's recommended to add this as a default option to launchers in intellij projects that use ea-async.
@@ -152,18 +152,18 @@ It might interfere with jvm debugging. This alternative is present as a fallback
 
 #### Option 3 - Run instrumentation tool
 
-The ea-async-0.9.1.jar is a runnable jar that can pre-instrument your files (since version 0.9.1)
+The ea-async-1.0.0.jar is a runnable jar that can pre-instrument your files (since version 0.9.1)
 
 Usage:
 
 ```bash
-java -cp YOUR_PROJECT_CLASSPATH -jar ea-async-0.9.1.jar classDirectory
+java -cp YOUR_PROJECT_CLASSPATH -jar ea-async-1.0.0.jar classDirectory
 ```
 
 Example:
 
 ```bash
-java -cp guava.jar;commons-lang.jar  -jar ea-async-0.9.1.jar target/classes
+java -cp guava.jar;commons-lang.jar  -jar ea-async-1.0.0.jar target/classes
 ```
 
 After that all the files in target/classes will have been instrumented.
@@ -186,7 +186,7 @@ This is the best option for libraries and maven projects.
         <plugin>
             <groupId>com.ea.async</groupId>
             <artifactId>ea-async-maven-plugin</artifactId>
-            <version>0.9.1</version>
+            <version>1.0.0</version>
             <executions>
                 <execution>
                     <goals>
