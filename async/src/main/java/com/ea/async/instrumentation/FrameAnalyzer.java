@@ -42,6 +42,7 @@ import org.objectweb.asm.tree.analysis.BasicInterpreter;
 import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Frame;
 import org.objectweb.asm.tree.analysis.Interpreter;
+import org.objectweb.asm.tree.analysis.Value;
 
 import java.util.Arrays;
 
@@ -63,6 +64,7 @@ class FrameAnalyzer extends Analyzer
         AbstractInsnNode insnNode;
         boolean uninitialized;
         public BasicValue[] undecided;
+        private BasicValue replacement;
 
         public ExtendedValue(final Type type)
         {
@@ -90,6 +92,17 @@ class FrameAnalyzer extends Analyzer
         public String toString()
         {
             return undecided != null ? "?" : uninitialized ? "%" + super.toString() : super.toString();
+        }
+
+
+        public void setReplacement(final BasicValue replacement)
+        {
+            this.replacement = replacement;
+        }
+
+        public BasicValue getReplacement()
+        {
+            return replacement;
         }
     }
 
@@ -202,14 +215,44 @@ class FrameAnalyzer extends Analyzer
             if (force)
             {
                 // uses the current frame
+                computeReplacements(frame);
                 return true;
             }
             if (frame instanceof ExtendedFrame && ((ExtendedFrame) frame).force)
             {
+                ((ExtendedFrame) frame).computeReplacements(this);
                 init(frame);
                 return true;
             }
             return super.merge(frame, interpreter);
+        }
+
+        private void computeReplacements(final Frame other)
+        {
+            for (int i = 0; i < other.getLocals(); ++i)
+            {
+                final Value v1 = other.getLocal(i);
+                final BasicValue v2 = getLocal(i);
+                computeReplacement(v1, v2);
+            }
+            for (int i = 0; i < other.getStackSize(); ++i)
+            {
+                final Value v1 = other.getStack(i);
+                final BasicValue v2 = getStack(i);
+                computeReplacement(v1, v2);
+            }
+        }
+
+        private void computeReplacement(final Value v1, final BasicValue v2)
+        {
+            if (v1 instanceof ExtendedValue)
+            {
+                final Type type = ((ExtendedValue) v1).getType();
+                if (type != null && "Lnull;".equals(type.toString()))
+                {
+                    ((ExtendedValue) v1).setReplacement(v2);
+                }
+            }
         }
     }
 
@@ -261,7 +304,7 @@ class FrameAnalyzer extends Analyzer
                     // TODO: test this with an assignment
                     //    like: local1 was CompletableFuture <- store Task
                     ExtendedValue nv = (ExtendedValue) newValue(BasicValue.REFERENCE_VALUE.getType());
-                    nv.undecided = new BasicValue[]{v, w};
+                    nv.undecided = new BasicValue[]{ v, w };
                     return nv;
                 }
             }
@@ -376,5 +419,37 @@ class FrameAnalyzer extends Analyzer
             return interpreter.newOperation(node);
         }
         return interpreter.newValue(null);
+    }
+
+    @Override
+    public Frame[] analyze(final String owner, final MethodNode m) throws AnalyzerException
+    {
+        final Frame[] frames = super.analyze(owner, m);
+
+        // perform replacements
+        for (Frame frame : frames)
+        {
+            if (frame != null)
+            {
+                for (int i = 0; i < frame.getLocals(); ++i)
+                {
+                    final Value v1 = frame.getLocal(i);
+                    if (v1 instanceof ExtendedValue && ((ExtendedValue) v1).getReplacement() != null)
+                    {
+                        frame.setLocal(i, ((ExtendedValue) v1).getReplacement());
+                    }
+
+                }
+                for (int i = 0; i < frame.getStackSize(); ++i)
+                {
+                    final Value v1 = frame.getStack(i);
+                    if (v1 instanceof ExtendedValue && ((ExtendedValue) v1).getReplacement() != null)
+                    {
+                        // TODO: handle in the frame opcode creation
+                    }
+                }
+            }
+        }
+        return frames;
     }
 }

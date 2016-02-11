@@ -30,7 +30,10 @@ package com.ea.async.test;
 
 import com.ea.async.Async;
 import com.ea.async.Task;
+import com.ea.async.instrumentation.DevDebug;
+import com.ea.async.instrumentation.Transformer;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.objectweb.asm.ClassReader;
@@ -39,7 +42,12 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.analysis.AnalyzerException;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.Callable;
@@ -275,5 +283,53 @@ public class BaseTest
             return true;
         }
         return false;
+    }
+
+    public void debugTransform(String className) throws Exception
+    {
+
+        final String resourceName = "/" + className.replace(".", "/") + ".class";
+        System.out.println(resourceName);
+        final byte[] bytesInput = IOUtils.toByteArray(getClass().getResourceAsStream(resourceName));
+        debugTransform(bytesInput);
+    }
+
+
+    public void debugTransform(Class<?> clazz) throws Exception
+    {
+        final byte[] bytesInput = IOUtils.toByteArray(clazz.getResourceAsStream("/" + clazz.getName().replace(".", "/") + ".class"));
+        debugTransform(bytesInput);
+    }
+
+    private void debugTransform(final byte[] bytesInput) throws IOException, AnalyzerException
+    {
+        final ClassReader crInput = new ClassReader(bytesInput);
+        {
+            final ClassNode cnInput = new ClassNode();
+            crInput.accept(cnInput, 0);
+
+
+            final Path pathInput = Paths.get("target/classes2").resolve(cnInput.name + ".class");
+            Files.deleteIfExists(pathInput);
+            Files.createDirectories(pathInput.getParent());
+            Files.write(pathInput, bytesInput);
+            System.out.println(pathInput.toUri());
+            DevDebug.debugSaveTrace(cnInput.name, cnInput);
+        }
+
+        {
+            final Transformer transformer = new Transformer();
+            final byte[] bytesOutput = transformer.transform(getClass().getClassLoader(), crInput);
+            final ClassReader crOutput = new ClassReader(bytesOutput);
+            final ClassNode cnOutput = new ClassNode();
+            crOutput.accept(cnOutput, 0);
+
+            final Path pathOutput = Paths.get("target/classes2").resolve(cnOutput.name + ".out.class");
+            Files.deleteIfExists(pathOutput);
+            Files.createDirectories(pathOutput.getParent());
+            Files.write(pathOutput, bytesOutput);
+            System.out.println(pathOutput.toUri());
+            DevDebug.debugSaveTrace(cnOutput.name + ".out", cnOutput);
+        }
     }
 }
