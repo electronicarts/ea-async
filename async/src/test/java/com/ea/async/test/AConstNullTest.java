@@ -91,4 +91,92 @@ public class AConstNullTest extends BaseTest
         }
     }
 
+    @Test
+    public void nullInitialization3() throws Exception
+    {
+        final Task<Void> res = NullInit3.doIt(getBlockedTask());
+        completeFutures();
+        assertNull(res.join());
+
+    }
+
+    public static class NullInit3
+    {
+        public static Task<Void> doIt(Task<Void> task)
+        {
+            String x = null;
+            call0(x, await(task));
+            return Task.done();
+        }
+    }
+
+    public static void call0(final Object a, final Object b)
+    {
+    }
+
+
+    @Test
+    public void nullInitialization4() throws Exception
+    {
+        final Task<Void> res = NullInit4.doIt(getBlockedTask());
+        completeFutures();
+        assertNull(res.join());
+
+    }
+
+    public static class NullInit4
+    {
+        public static Task<Void> doIt(Task<String> task)
+        {
+            String x = null;
+            call0(await(task), x);
+            return Task.done();
+        }
+    }
+
+
+    @Test
+    public void nullInTheStack() throws Exception
+    {
+        debugTransform(AConstNullTest.class.getName() + "$NullInTheStack");
+        final Task<Void> res = NullInTheStack.doIt(getBlockedTask());
+        completeFutures();
+        assertNull(res.join());
+    }
+
+    public static class NullInTheStack
+    {
+        public static Task<Void> doIt(Task<Void> task)
+        {
+            call2(null, await(task));
+            return Task.done();
+        }
+
+        private static void call2(final Object o, final Object p)
+        {
+        }
+    }
+
+
+    @Test
+    public void nullInTheStack2() throws Exception
+    {
+        debugTransform(AConstNullTest.class.getName() + "$NullInTheStack2");
+        final Task<Void> res = NullInTheStack2.doIt(getBlockedTask());
+        completeFutures();
+        assertNull(res.join());
+    }
+
+    public static class NullInTheStack2
+    {
+        public static Task<Void> doIt(Task<Void> task)
+        {
+            call2(null, await(task));
+            return Task.done();
+        }
+        private static void call2(final String o, final Object p)
+        {
+        }
+
+    }
 }
