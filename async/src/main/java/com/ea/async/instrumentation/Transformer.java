@@ -117,6 +117,7 @@ public class Transformer implements ClassFileTransformer
     private static final String COMPLETION_STAGE_RET = ")Ljava/util/concurrent/CompletionStage;";
 
     private static final String _THIS = "_this";
+    private static final Type ACONST_NULL_TYPE = Type.getObjectType("null");
 
     public static final String JOIN_METHOD_NAME = "join";
     public static final String JOIN_METHOD_DESC = "()Ljava/lang/Object;";
@@ -740,6 +741,10 @@ public class Transformer implements ClassFileTransformer
 
     private Argument mapLocalToLambdaArgument(final MethodNode originalMethod, SwitchEntry se, final List<Argument> arguments, final int local, final BasicValue value)
     {
+        if (ACONST_NULL_TYPE.equals(value.getType()))
+        {
+            return null;
+        }
         Argument argument = null;
         String name = local < originalMethod.maxLocals ? guessName(originalMethod, se, local) : "_stack$" + (local - originalMethod.maxLocals);
 
@@ -1383,7 +1388,12 @@ public class Transformer implements ClassFileTransformer
             case Type.DOUBLE:
                 return Opcodes.DOUBLE;
         }
-        return type.getInternalName();
+        final String internalName = type.getInternalName();
+        if (ACONST_NULL_TYPE.equals(type))
+        {
+            return Opcodes.NULL;
+        }
+        return internalName;
     }
 
     private boolean isAwaitCall(final MethodInsnNode methodIns)

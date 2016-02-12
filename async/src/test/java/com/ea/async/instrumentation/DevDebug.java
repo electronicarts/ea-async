@@ -51,9 +51,9 @@ import java.nio.file.Paths;
 /**
  * For development use only
  */
-class DevDebug
+public class DevDebug
 {
-    static void printMethod(final ClassNode cn, final MethodNode mv)
+    public static void printMethod(final ClassNode cn, final MethodNode mv)
     {
         final PrintWriter pw = new PrintWriter(System.out);
         pw.println("method " + mv.name + mv.desc);
@@ -120,7 +120,7 @@ class DevDebug
     }
 
 
-    static void debugSave(final ClassNode classNode, final byte[] bytes)
+    public static void debugSave(final ClassNode classNode, final byte[] bytes)
     {
         try
         {
@@ -136,7 +136,7 @@ class DevDebug
     }
 
 
-    static void debugSaveTrace(String name, final byte[] bytes)
+    public static void debugSaveTrace(String name, final byte[] bytes)
     {
         try
         {
@@ -145,7 +145,7 @@ class DevDebug
             new ClassReader(bytes).accept(new TraceClassVisitor(pw), 0);
             pw.flush();
 
-            Path path = Paths.get("target/classes2/" + name + ".trace.jasm");
+            Path path = Paths.get("target/classes2/" + name + ".asmtrace");
             Files.createDirectories(path.getParent());
             Files.write(path, sw.toString().getBytes(Charset.forName("UTF-8")));
             System.out.println("Writing file to " + path.toUri());
@@ -156,7 +156,7 @@ class DevDebug
         }
     }
 
-    static void debugSaveTrace(String name, ClassNode node)
+    public static void debugSaveTrace(String name, ClassNode node)
     {
         try
         {
@@ -165,9 +165,10 @@ class DevDebug
             node.accept(new TraceClassVisitor(pw));
             pw.flush();
 
-            Path path = Paths.get("target/classes2/" + name + ".trace.txt");
+            Path path = Paths.get("target/classes2/" + name + ".asmtrace");
             Files.createDirectories(path.getParent());
             Files.write(path, sw.toString().getBytes(Charset.forName("UTF-8")));
+            System.out.println("Writing file to " + path.toUri());
         }
         catch (IOException e)
         {
