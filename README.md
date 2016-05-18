@@ -8,7 +8,6 @@ EA Async
 
 EA Async implements Async-Await methods in the JVM.
 It allows programmers to write asynchronous code in a sequential fashion.
-It was developed by [BioWare](http://www.bioware.com), a division of [Electronic Arts](http://www.ea.com) and was originally part of the [Orbit Project](https://github.com/orbit/orbit).
 
 It is heavily inspired by Async-Await on the .NET CLR, see [Asynchronous Programming with Async and Await](https://msdn.microsoft.com/en-us/library/hh191443.aspx) for more information.
 
@@ -19,9 +18,9 @@ EA Async should be used to write non-blocking asynchronous code that makes heavy
 It improves scalability by freeing worker threads while your code awaits other processes;
 And improves productivity by making asynchronous code simpler and more readable.
 
-License
-=======
-EA Async is licensed under the [BSD 3-Clause License](./LICENSE).
+Developer & License
+======
+This project was developed by [Electronic Arts](http://www.ea.com) and is licensed under the [BSD 3-Clause License](LICENSE).
 
 Examples
 =======
