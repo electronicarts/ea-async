@@ -1521,6 +1521,7 @@ public class Transformer implements ClassFileTransformer
             }
         }
         // push the arguments that must be copied to locals
+        // must only push
         for (int iLocal = 0; iLocal < frame.getLocals(); iLocal += valueSize(frame.getLocal(iLocal)))
         {
             final BasicValue value = frame.getLocal(iLocal);
@@ -1531,13 +1532,8 @@ public class Transformer implements ClassFileTransformer
                     mv.visitVarInsn(value.getType().getOpcode(ILOAD), se.localToiArgument[iLocal]);
                 }
             }
-            else if (value != null && value.getType() != null)
-            {
-                pushDefault(mv, value);
-                mv.visitVarInsn(value.getType().getOpcode(ISTORE), iLocal);
-            }
         }
-        // push the arguments that must be copied to locals
+        // stores the values that came from arguments
         for (int iLocal = frame.getLocals(); --iLocal >= 0; )
         {
             if (se.localToiArgument[iLocal] >= 0 && se.localToiArgument[iLocal] != iLocal)
@@ -1545,6 +1541,17 @@ public class Transformer implements ClassFileTransformer
                 mv.visitVarInsn(frame.getLocal(iLocal).getType().getOpcode(ISTORE), iLocal);
             }
         }
+        // restore values that were initialized as constants (i.e.: ACONST_NULL)
+        for (int iLocal = 0; iLocal < frame.getLocals(); iLocal += valueSize(frame.getLocal(iLocal)))
+        {
+            final BasicValue value = frame.getLocal(iLocal);
+            if (se.localToiArgument[iLocal] < 0 && value != null && value.getType() != null)
+            {
+                pushDefault(mv, value);
+                mv.visitVarInsn(value.getType().getOpcode(ISTORE), iLocal);
+            }
+        }
+
         // reacquire monitors
         for (int i = 0; i < se.frame.monitors.length; i++)
         {
