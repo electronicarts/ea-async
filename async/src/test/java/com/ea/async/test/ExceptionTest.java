@@ -68,6 +68,30 @@ public class ExceptionTest extends BaseTest
         return null;
     }
 
+    @Test
+    public void testFinally() throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException
+    {
+        final Task<Integer> res = doTestFinally();
+        completeFutures();
+        assertEquals((Integer) 1337, res.join());
+    }
+
+    private Task<Integer> doTestFinally()
+    {
+        try
+        {
+            if (await(getBlockedFuture(10)) == 10)
+            {
+                throw new IllegalArgumentException(String.valueOf(10));
+            }
+
+        }
+        finally
+        {
+            return Task.fromValue(1337);
+        }
+    }
+
 
     @Test
     public void testTryCatch2() throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException
