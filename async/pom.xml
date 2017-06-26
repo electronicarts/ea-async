@@ -33,7 +33,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <parent>
         <groupId>com.ea.async</groupId>
         <artifactId>ea-async-parent</artifactId>
-        <version>1.0.6-SNAPSHOT</version>
+        <version>1.0.6</version>
         <relativePath>..</relativePath>
     </parent>
     <artifactId>ea-async</artifactId>
