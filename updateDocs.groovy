@@ -3,33 +3,33 @@ import java.nio.file.Files
 import java.nio.file.Paths
 
 if (args.length != 1) {
-    System.err.println("Usage: updateDocVersions <new-version>");
-    return;
+    System.err.println("Usage: updateDocVersions <new-version>")
+    return
 }
 
 def version = args[0]
 
-Files.walk(Paths.get(".")).forEach({ f ->
-    def modifiedText = null;
-    def text = null;
+Files.walk(Paths.get(".")).forEach { f ->
+    def modifiedText
+    def text
     if (f.toString().endsWith(".md")) {
         // examples inside .md
-        text = new String(Files.readAllBytes(f), StandardCharsets.UTF_8);
-        modifiedText = text.replaceAll("<version>[^<]*</version>", (String) ("<version>" + version + "</version>"))
-        modifiedText = modifiedText.replaceAll("ea-async-[.0-9a-zA-Z_-]+[.]jar", (String) ("ea-async-" + version + ".jar"))
-        modifiedText = modifiedText.replaceAll("(com[.]ea[.]async[:]ea-async[:])[^']*[']", (String) ("com.ea.async:ea-async:" + version + "'"))
+        text = new String(Files.readAllBytes(f), StandardCharsets.UTF_8)
+        modifiedText = text.replaceAll("<version>[^<]*</version>", "<version>$version</version>")
+        modifiedText = modifiedText.replaceAll("ea-async-[.0-9a-zA-Z_-]+[.]jar", "ea-async-$version.jar")
+        modifiedText = modifiedText.replaceAll("(com[.]ea[.]async[:]ea-async[:])[^']*[']", "com.ea.async:ea-async:$version'")
     }
-    if (f.toString().matches(".*project-to-test[/\\\\]pom[.]xml\$")) {
+    if (f.toString() ==~ /.*project-to-test[\/\\]pom[.]xml\$/)) {
         // sample project
-        text = new String(Files.readAllBytes(f), StandardCharsets.UTF_8);
-        modifiedText = text.replaceAll("(<artifactId>ea-async(-maven-plugin)?</artifactId>\\s*<version)>[^<]*(</version>)",
-                (String) ("\$1>" + version + "\$3"))
+        text = new String(Files.readAllBytes(f), StandardCharsets.UTF_8)
+        modifiedText = text.replaceAll(/(<artifactId>ea-async(-maven-plugin)?<\/artifactId>\s*<version)>[^<]*(<\/version>)/,
+                "\$1>$version\$3")
     }
-    if (modifiedText != null && !text.equals(modifiedText)) {
+    if (modifiedText != null && text != modifiedText) {
         println f
-        Files.write(f, modifiedText.getBytes(StandardCharsets.UTF_8));
+        Files.write(f, modifiedText.getBytes(StandardCharsets.UTF_8))
     }
-})
+}
 
 // this script will run during deployment
 //mvn versions:set -DnewVersion=newVer
