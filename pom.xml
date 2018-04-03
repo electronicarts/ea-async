@@ -29,7 +29,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.ea.async</groupId>
     <artifactId>ea-async-parent</artifactId>
-    <version>1.0.7-SNAPSHOT</version>
+    <version>1.1.0</version>
     <packaging>pom</packaging>
     <name>EA Async Parent</name>
     <description>EA Async implements async-await methods in the JVM. It allows programmers to write asynchronous code in
@@ -200,6 +200,13 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <build>
                 <plugins>
                     <plugin>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.commons</groupId>
+                                <artifactId>commons-lang3</artifactId>
+                                <version>3.7</version>
+                            </dependency>
+                        </dependencies>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <configuration>
