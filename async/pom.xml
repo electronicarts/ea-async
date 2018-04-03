@@ -39,6 +39,10 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <artifactId>ea-async</artifactId>
     <name>EA Async-Await</name>
 
+    <properties>
+        <asm.version>6.1.1</asm.version>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -76,14 +80,21 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         <configuration>
                             <artifactSet>
                                 <includes>
-                                    <include>com.ea.async:async-agent-loader</include>
-                                    <include>org.ow2.asm:asm-debug-all</include>
+                                    <include>net.bytebuddy:byte-buddy-agent</include>
+                                    <include>org.ow2.asm:asm</include>
+                                    <include>org.ow2.asm:asm-analysis</include>
+                                    <include>org.ow2.asm:asm-util</include>
+                                    <include>org.ow2.asm:asm-tree</include>
                                 </includes>
                             </artifactSet>
                             <relocations>
                                 <relocation>
                                     <pattern>org.objectweb.</pattern>
                                     <shadedPattern>com.ea.async.shaded.org.objectweb.</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>net.bytebuddy.</pattern>
+                                    <shadedPattern>com.ea.async.shaded.net.bytebuddy.</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
@@ -96,23 +107,38 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <dependencies>
         <dependency>
             <groupId>org.ow2.asm</groupId>
-            <artifactId>asm-debug-all</artifactId>
-            <version>5.2</version>
+            <artifactId>asm</artifactId>
+            <version>${asm.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-util</artifactId>
+            <version>${asm.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-analysis</artifactId>
+            <version>${asm.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-tree</artifactId>
+            <version>${asm.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.19</version>
+            <version>1.7.25</version>
         </dependency>
         <dependency>
-            <groupId>com.ea.agentloader</groupId>
-            <artifactId>ea-agent-loader</artifactId>
-            <version>1.0.3</version>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy-agent</artifactId>
+            <version>1.8.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.6</version>
+            <version>3.7</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -123,7 +149,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.4</version>
+            <version>2.6</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

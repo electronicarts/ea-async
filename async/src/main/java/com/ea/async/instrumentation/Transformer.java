@@ -1103,7 +1103,7 @@ public class Transformer implements ClassFileTransformer
         // stack: { }
         mv.visitVarInsn(ALOAD, switchEntry.stackToNewLocal[switchEntry.frame.getStackSize() - 1]);
         // stack: { future  }
-        mv.visitMethodInsn(INVOKESTATIC, Type.getType(Function.class).getInternalName(), "identity", "()Ljava/util/function/Function;", false);
+        mv.visitMethodInsn(INVOKESTATIC, Type.getType(Function.class).getInternalName(), "identity", "()Ljava/util/function/Function;", true);
         // stack: { future identity_function }
         // this discards any exception. the exception will be thrown by calling join.
         // the other option is not to use thenCompose and use something more complex.

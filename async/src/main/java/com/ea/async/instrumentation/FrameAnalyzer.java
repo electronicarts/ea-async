@@ -221,6 +221,10 @@ class FrameAnalyzer extends Analyzer
     {
         static TypeInterpreter instance = new TypeInterpreter();
 
+        TypeInterpreter() {
+            super(ASM6);
+        }
+
         @Override
         public BasicValue newValue(Type type)
         {

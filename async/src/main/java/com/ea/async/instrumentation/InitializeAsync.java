@@ -28,12 +28,11 @@
 
 package com.ea.async.instrumentation;
 
-import com.ea.agentloader.AgentLoader;
-import com.ea.agentloader.ClassPathUtils;
-
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.analysis.Analyzer;
+
+import net.bytebuddy.agent.ByteBuddyAgent;
 
 import java.io.File;
 import java.lang.management.ManagementFactory;
@@ -42,6 +41,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Locale;
 
 /**
  * Internal class to (when necessary) attach a java agent to
@@ -103,7 +103,57 @@ public class InitializeAsync
 
     static URL getClassPathFor(Class<?> clazz) throws URISyntaxException, MalformedURLException
     {
-        return ClassPathUtils.getClassPathFor(clazz);
+        if (clazz == null)
+        {
+            throw new IllegalArgumentException("Null class");
+        }
+        try
+        {
+            final URL url = getClassFile(clazz);
+            String urlString = url.toString();
+            final int endIndex = urlString.indexOf("!");
+            if (endIndex > 0)
+            {
+                // assuming it's something inside a jar
+                int beginIndex = urlString.toLowerCase(Locale.ENGLISH).lastIndexOf("file:/");
+                if (beginIndex >= 0)
+                {
+                    return new URL(urlString.substring(beginIndex, endIndex));
+                }
+                beginIndex = urlString.lastIndexOf("[a-zA-Z]+://");
+                if (beginIndex > 0)
+                {
+                    return new URL(urlString.substring(beginIndex, endIndex));
+                }
+            }
+            else
+            {
+                // assuming it's a file
+                File dir = new File(url.toURI()).getParentFile();
+                if (clazz.getPackage() != null)
+                {
+                    String pn = clazz.getPackage().getName();
+                    for (int i = pn.indexOf('.'); i >= 0; i = pn.indexOf('.', i + 1))
+                    {
+                        dir = dir.getParentFile();
+                    }
+                    dir = dir.getParentFile();
+                }
+                return dir.toURI().toURL();
+            }
+            throw new RuntimeException("Error locating classpath entry for: " + clazz.getName() + " url: " + url);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("Error locating classpath entry for: " + clazz.getName(), e);
+        }
+    }
+
+    private static URL getClassFile(final Class<?> clazz)
+    {
+        int idx = clazz.getName().lastIndexOf('.');
+        final String fileName = (idx >= 0 ? clazz.getName().substring(idx + 1) : clazz.getName()) + ".class";
+        return clazz.getResource(fileName);
     }
 
     static void loadAgent()
@@ -152,7 +202,7 @@ public class InitializeAsync
                     }
                 }
             }
-            AgentLoader.loadAgent(jarName, null);
+            ByteBuddyAgent.attach(new File(jarName), pid);
         }
         catch (Throwable e)
         {
