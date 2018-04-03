@@ -585,7 +585,8 @@ public class Transformer implements ClassFileTransformer
         continued.name = (countUses == null) ? continuedName : (continuedName + "$" + countUses);
         continued.desc = Type.getMethodDescriptor(COMPLETABLE_FUTURE_TYPE, typeArguments);
         continued.signature = null;
-        final Handle handle = new Handle(Opcodes.H_INVOKESTATIC, classNode.name, continued.name, continued.desc);
+        final boolean isInterface = (classNode.access & ACC_INTERFACE) == ACC_INTERFACE;
+        final Handle handle = new Handle(Opcodes.H_INVOKESTATIC, classNode.name, continued.name, continued.desc, isInterface);
 
         final boolean nonCompFutReturn = !original.desc.endsWith(COMPLETABLE_FUTURE_RET) && !original.desc.endsWith(COMPLETION_STAGE_RET);
 
@@ -1153,7 +1154,8 @@ public class Transformer implements ClassFileTransformer
             final String retType = Type.getReturnType(original.desc).getInternalName();
             final String castFunction = "lambda$checkCast$" + retType.replace('/', '_');
             generateCheckCast(classNode, castFunction, retType);
-            mv.visitMethodInsn(INVOKESTATIC, classNode.name, castFunction, "(Ljava/util/concurrent/CompletionStage;)L" + retType + ";", false);
+            final boolean isInterface = (classNode.access & ACC_INTERFACE) == ACC_INTERFACE;
+            mv.visitMethodInsn(INVOKESTATIC, classNode.name, castFunction, "(Ljava/util/concurrent/CompletionStage;)L" + retType + ";", isInterface);
             mv.visitTypeInsn(CHECKCAST, retType);
 
 
