@@ -40,7 +40,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <name>EA Async-Await</name>
 
     <properties>
-        <asm.version>6.1.1</asm.version>
+        <asm.version>6.2</asm.version>
     </properties>
 
     <build>
@@ -133,7 +133,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy-agent</artifactId>
-            <version>1.8.3</version>
+            <version>1.8.12</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
