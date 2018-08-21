@@ -31,7 +31,7 @@
     <parent>
         <groupId>com.ea.async</groupId>
         <artifactId>ea-async-parent</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.2.1</version>
         <relativePath>../../../..</relativePath>
     </parent>
     <groupId>com.ea.async.samples</groupId>
@@ -67,7 +67,7 @@
             <plugin>
                 <groupId>com.ea.async</groupId>
                 <artifactId>ea-async-maven-plugin</artifactId>
-                <version>1.2.1-SNAPSHOT</version>
+                <version>1.2.1</version>
                 <executions>
                     <execution>
                         <goals>
@@ -90,7 +90,7 @@
         <dependency>
             <groupId>com.ea.async</groupId>
             <artifactId>ea-async</artifactId>
-            <version>1.2.1-SNAPSHOT</version>
+            <version>1.2.1</version>
         </dependency>
 
         <dependency>
