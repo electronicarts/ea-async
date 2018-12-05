@@ -575,7 +575,7 @@ public class Transformer implements ClassFileTransformer
 
         final boolean staticSynchronized = ((original.access & ACC_SYNCHRONIZED) != 0 && (original.access & ACC_STATIC) != 0);
         final boolean instanceSynchronized = ((original.access & ACC_SYNCHRONIZED) != 0 && (original.access & ACC_STATIC) == 0);
-        final MethodNode continued = new MethodNode(Opcodes.ACC_PRIVATE | ACC_STATIC | (staticSynchronized ? ACC_SYNCHRONIZED : 0),
+        final MethodNode continued = new MethodNode(Opcodes.ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC | (staticSynchronized ? ACC_SYNCHRONIZED : 0),
                 original.name, original.desc, original.signature, (String[]) original.exceptions.toArray(new String[original.exceptions.size()]));
 
         String continuedName = "async$" + original.name;
