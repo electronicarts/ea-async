@@ -24,7 +24,7 @@ Add the EA Async dependency:
 <dependency>
     <groupId>com.ea.async</groupId>
     <artifactId>ea-async</artifactId>
-    <version>1.2.1</version>
+    <version>1.2.2</version>
 </dependency>
 ```
 
@@ -36,7 +36,7 @@ Add the build plugin that will instrument the uses of `await`
         <plugin>
             <groupId>com.ea.async</groupId>
             <artifactId>ea-async-maven-plugin</artifactId>
-            <version>1.2.1</version>
+            <version>1.2.2</version>
             <executions>
                 <execution>
                     <goals>
