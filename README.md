@@ -14,9 +14,7 @@ It is heavily inspired by Async-Await on the .NET CLR, see [Asynchronous Program
 Who should use it?
 ------
 
-EA Async should be used to write non-blocking asynchronous code that makes heavy use of CompletableFutures or CompletionStage.
-It improves scalability by freeing worker threads while your code awaits other processes;
-And improves productivity by making asynchronous code simpler and more readable.
+EA Async contains heavy usage of CompletableFutures and CompletionStage that is used to write non-blocking asynchronous code. EA Async improves scalability by freeing worker threads while your code awaits the completion of other processes. Productivity is also improved by simplifying asynchronous code for readability.
 
 Developer & License
 ======
