@@ -101,10 +101,9 @@ Got it? Send it [to us](https://github.com/electronicarts/ea-async/issues/new). 
 Getting started
 ---------------
 
-EA Async currently supports JDK 8-10.
+EA Async currently supports JDK 8-10 and works with Java, Scala, and most JVM languages.
 
-It works with Java and Scala and should work with most JVM languages.
-The only requirement to use EA Async is that must be used only inside methods that return `CompletableFuture`, `CompletionStage`, or subclasses of `CompletableFuture`.
+EA Async must be used inside methods that return `CompletableFuture`, `CompletionStage`, or subclasses of `CompletableFuture`.
 
 ### Using with maven
 
