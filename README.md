@@ -42,10 +42,7 @@ public class Store
 ```
 In this example `Bank.decrement` returns `CompletableFuture<Boolean>` and `Inventory.giveItem` returns `CompletableFuture<String>`
 
-EA Async rewrites the calls to `Async.await` making your methods non-blocking.
-
-The methods look blocking but are actually transformed into asynchronous methods that use
-CompletableFutures to continue the execution as intermediary results arrive.
+EA Async rewrites the calls to `Async.await` transforming your methods into non-blocking asynchronous methods that use CompletableFutures to continue the execution as intermediary results arrive.
 
 #### Without EA Async
 
