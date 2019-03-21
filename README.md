@@ -133,15 +133,15 @@ Start your application with an extra JVM parameter: `-javaagent:ea-async-1.2.2.j
 It's recommended to add this as a default option to launchers in IntelliJ projects that use ea-async.
 
 #### Option 2 - Runtime
-On your main class or as early as possible, call at least once:
+In your main class, or as early as possible, call at least once:
 ```
 Async.init();
 ```
-Provided that your JVM has the capability enabled, this will start a runtime instrumentation agent.
-If you forget to invoke this function, the first call to `await` will initialize the system (and print a warning).
+This will start a runtime instrumentation agent provided that your JVM has the capability enabled.
+The first call to `await` will initialize the system and print a warning if you forget to invoke this function.
 
-This is a solution for testing and development, it has the least amount of configuration.
-It might interfere with JVM debugging. This alternative is present as a fallback.
+This is a solution for testing and development with the least amount of configuration, but it might interfere with JVM debugging.
+This alternative is present as a fallback.
 
 #### Option 3 - Run instrumentation tool
 
