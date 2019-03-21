@@ -165,11 +165,10 @@ There will be no references to `Async.await` and `Async.init` left in those clas
 
 #### Option 4 - Build time instrumentation, with Maven - Preferred
 
-Use the [ea-async-maven-plugin](maven-plugin). It will instrument your classes in compile time and
-remove all references to `Async.await` and `Async.init()`.
+The ea-async-maven-plugin will instrument your classes in compile time and remove all references to `Async.await` and `Async.init()`.
 
-With build time instrumentation your project users won't need to have EA Async in their classpath unless they also choose to use it.
-This means that EA Async <i>does not need to be a transitive dependency</i>.
+With build time instrumentation, EA Async is not needed in the classpath for your project users unless they choose to use it.
+EA Async <i>does not need to be a transitive dependency</i>.
 
 This is the best option for libraries and maven projects.
 
