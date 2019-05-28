@@ -29,7 +29,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.ea.async</groupId>
     <artifactId>ea-async-parent</artifactId>
-    <version>1.2.3-SNAPSHOT</version>
+    <version>1.2.3</version>
     <packaging>pom</packaging>
     <name>EA Async Parent</name>
     <description>EA Async implements async-await methods in the JVM. It allows programmers to write asynchronous code in
