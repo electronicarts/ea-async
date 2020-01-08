@@ -48,6 +48,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <module>async</module>
         <module>maven-plugin</module>
         <module>maven-plugin/src/test/project-to-test</module>
+        <module>gradle-plugin</module>
     </modules>
 
     <dependencyManagement>
