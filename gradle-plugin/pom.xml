@@ -146,27 +146,5 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.gradle</groupId>
-            <artifactId>gradle-plugins</artifactId>
-            <version>5.6.4</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.gradle</groupId>
-            <artifactId>gradle-tooling-api</artifactId>
-            <version>5.6.4</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Test dependency -->
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 </project>
