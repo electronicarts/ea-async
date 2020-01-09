@@ -52,6 +52,14 @@
                     <failOnError>false</failOnError>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <repositories>
@@ -79,6 +87,8 @@
             <artifactId>maven-core</artifactId>
             <version>3.5.3</version>
         </dependency>
+
+        <!-- Gradle dependencies -->
 
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
@@ -110,7 +120,35 @@
 
         <dependency>
             <groupId>org.gradle</groupId>
-            <artifactId>gradle-base-services-groovy</artifactId>
+            <artifactId>gradle-model-core</artifactId>
+            <version>5.6.4</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.gradle</groupId>
+            <artifactId>gradle-language-jvm</artifactId>
+            <version>5.6.4</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.gradle</groupId>
+            <artifactId>gradle-language-java</artifactId>
+            <version>5.6.4</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.gradle</groupId>
+            <artifactId>gradle-platform-jvm</artifactId>
+            <version>5.6.4</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.gradle</groupId>
+            <artifactId>gradle-plugins</artifactId>
             <version>5.6.4</version>
             <scope>provided</scope>
         </dependency>
@@ -122,12 +160,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-compat</artifactId>
-            <version>3.5.3</version>
-            <scope>test</scope>
-        </dependency>
+        <!-- Test dependency -->
 
         <dependency>
             <groupId>junit</groupId>

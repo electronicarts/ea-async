@@ -28,16 +28,77 @@
 
 package com.ea.async.gradle.plugin;
 
+import com.ea.async.instrumentation.Transformer;
+
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.tasks.compile.JavaCompile;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+/**
+ * A plugin that allows easily integrating EA Async instrumentation into the Gradle build process.
+ */
 public class AsyncPlugin implements Plugin<Project>
 {
 
+    /**
+     * Applies the plugin to the project. Prepares Java compilation tasks to be followed up on by instrumentation.
+     * @param project the Gradle project to which the plugin was applied
+     */
     @Override
     public void apply(final Project project)
     {
+        project.getTasks().withType(JavaCompile.class, task -> {
+            // This will be called for every JavaCompile task, whether already existing or added dynamically later
+            task.doLast("EA Async instrumentation", t -> instrumentCompileResults(task));
+        });
+    }
 
+    /**
+     * Rewrites compiled classes output by a Java compilation task.
+     * Called for each compilation task after it finishes.
+     * @param task the Java compilation task whose output to instrument
+     */
+    private void instrumentCompileResults(final JavaCompile task) {
+        final Transformer asyncTransformer = new Transformer();
+        asyncTransformer.setErrorListener(err -> {
+            throw new RuntimeException("Failed to instrument the output of " + task.toString() + ": " + err);
+        });
+        final ClassLoader classLoader = getClass().getClassLoader();
+        instrumentFile(task.getDestinationDir(), task, asyncTransformer, classLoader);
+    }
+
+    /**
+     * Recursively instruments the specified file system entry and its descendants.
+     * @param fsEntry a File in the output directory of a task
+     * @param task the JavaCompile task whose output is being instrumented
+     * @param asyncTransformer the transformer used to instrument the classes
+     * @param classLoader the classloader to supply to the transformer
+     */
+    private void instrumentFile(final File fsEntry, final JavaCompile task,
+                                final Transformer asyncTransformer, final ClassLoader classLoader) {
+        if (fsEntry.isDirectory()) {
+            for (File subentry : fsEntry.listFiles()) {
+                instrumentFile(subentry, task, asyncTransformer, classLoader);
+            }
+        } else if (fsEntry.isFile() && fsEntry.getName().endsWith(".class")) {
+            byte[] instrumentedClass;
+            try (FileInputStream fis = new FileInputStream(fsEntry)) {
+                instrumentedClass = asyncTransformer.instrument(classLoader, fis);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to instrument '" + fsEntry.getPath() + "' from " + task.toString(), e);
+            }
+            try {
+                Files.write(Paths.get(fsEntry.getAbsolutePath()), instrumentedClass);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to write '" + fsEntry.getPath() + "'", e);
+            }
+        }
     }
 
 }
