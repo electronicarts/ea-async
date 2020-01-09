@@ -37,8 +37,14 @@ import org.gradle.api.tasks.compile.JavaCompile;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * A plugin that allows easily integrating EA Async instrumentation into the Gradle build process.
@@ -53,7 +59,8 @@ public class AsyncPlugin implements Plugin<Project>
     @Override
     public void apply(final Project project)
     {
-        project.getTasks().withType(JavaCompile.class, task -> {
+        project.getTasks().withType(JavaCompile.class, task ->
+        {
             // This will be called for every JavaCompile task, whether already existing or added dynamically later
             task.doLast("EA Async instrumentation", t -> instrumentCompileResults(task));
         });
@@ -64,12 +71,29 @@ public class AsyncPlugin implements Plugin<Project>
      * Called for each compilation task after it finishes.
      * @param task the Java compilation task whose output to instrument
      */
-    private void instrumentCompileResults(final JavaCompile task) {
+    private void instrumentCompileResults(final JavaCompile task)
+    {
+        // Set up the Transformer to explode on failure
         final Transformer asyncTransformer = new Transformer();
-        asyncTransformer.setErrorListener(err -> {
+        asyncTransformer.setErrorListener(err ->
+        {
             throw new RuntimeException("Failed to instrument the output of " + task.toString() + ": " + err);
         });
-        final ClassLoader classLoader = getClass().getClassLoader();
+        // Create a classloader that can see the same CompletionStage subclasses as the compiler
+        final List<URL> classpathUrls = new ArrayList<>();
+        try
+        {
+            for (File f : task.getClasspath().plus(task.getOutputs().getFiles()).getFiles())
+            {
+                classpathUrls.add(f.toURI().toURL());
+            }
+        }
+        catch (MalformedURLException e)
+        {
+            throw new RuntimeException("Bad URL when preparing instrumentation of " + task.toString(), e);
+        }
+        final ClassLoader classLoader = new URLClassLoader(classpathUrls.toArray(new URL[0]));
+        // Rewrite the class files in the output directory
         instrumentFile(task.getDestinationDir(), task, asyncTransformer, classLoader);
     }
 
@@ -81,22 +105,38 @@ public class AsyncPlugin implements Plugin<Project>
      * @param classLoader the classloader to supply to the transformer
      */
     private void instrumentFile(final File fsEntry, final JavaCompile task,
-                                final Transformer asyncTransformer, final ClassLoader classLoader) {
-        if (fsEntry.isDirectory()) {
-            for (File subentry : fsEntry.listFiles()) {
+                                final Transformer asyncTransformer, final ClassLoader classLoader)
+    {
+        if (fsEntry.isDirectory())
+        {
+            // Recurse into subdirectories and files
+            for (File subentry : Objects.requireNonNull(fsEntry.listFiles())) {
                 instrumentFile(subentry, task, asyncTransformer, classLoader);
             }
-        } else if (fsEntry.isFile() && fsEntry.getName().endsWith(".class")) {
+        }
+        else if (fsEntry.isFile() && fsEntry.getName().endsWith(".class"))
+        {
+            // Instrument a class
             byte[] instrumentedClass;
-            try (FileInputStream fis = new FileInputStream(fsEntry)) {
+            try (FileInputStream fis = new FileInputStream(fsEntry))
+            {
                 instrumentedClass = asyncTransformer.instrument(classLoader, fis);
-            } catch (IOException e) {
+            }
+            catch (IOException e)
+            {
                 throw new RuntimeException("Failed to instrument '" + fsEntry.getPath() + "' from " + task.toString(), e);
             }
-            try {
-                Files.write(Paths.get(fsEntry.getAbsolutePath()), instrumentedClass);
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to write '" + fsEntry.getPath() + "'", e);
+            if (instrumentedClass != null)
+            {
+                // Transformer#instrument returns null if no changes were needed
+                try
+                {
+                    Files.write(Paths.get(fsEntry.getAbsolutePath()), instrumentedClass);
+                }
+                catch (IOException e)
+                {
+                    throw new RuntimeException("Failed to write '" + fsEntry.getPath() + "'", e);
+                }
             }
         }
     }
