@@ -133,8 +133,8 @@ public class Transformer implements ClassFileTransformer
             "metafactory",
             LAMBDA_DESC);
 
-    public static WeakHashMap<URL, Boolean> futureMap = new WeakHashMap<>();
-    public static WeakHashMap<ClassLoader, Set<URL>> classLoaderMap = new WeakHashMap<>();
+    public static final WeakHashMap<URL, Boolean> futureMap = new WeakHashMap<>();
+    public static final WeakHashMap<ClassLoader, Set<URL>> classLoaderMap = new WeakHashMap<>();
 
     private Consumer<String> errorListener;
 
