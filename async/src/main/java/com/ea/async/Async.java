@@ -67,8 +67,10 @@ import java.util.concurrent.CompletionStage;
  * }
  * </code></pre>
  */
-public class Async
+public final class Async
 {
+    private Async(){}
+
     /**
      * Ensure that if no pre instrumentation was done, that the Async runtime instrumentation is running.
      * <p/>
