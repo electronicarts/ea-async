@@ -74,9 +74,9 @@
     </build>
     <dependencies>
         <dependency>
-            <groupId>com.ea.async</groupId>
+            <groupId>com.github.devsaider</groupId>
             <artifactId>ea-async</artifactId>
-            <version>${project.version}</version>
+            <version>feature~java-11-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -132,4 +132,10 @@
         </dependency>
 
     </dependencies>
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
 </project>
