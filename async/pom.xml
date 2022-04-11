@@ -40,7 +40,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <name>EA Async-Await</name>
 
     <properties>
-        <asm.version>7.1</asm.version>
+        <asm.version>8.0.1</asm.version>
     </properties>
 
     <build>
